@@ -1,0 +1,428 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>货袋子 · 企业积分中心</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://cdn.jsdelivr.net/npm/echarts@5/dist/echarts.min.js"></script>
+<script>
+  tailwind.config = {
+    theme: {
+      extend: {
+        colors: {
+          steel: '#1E40AF',
+          steelDark:'#1E3A8A',
+          warn:  '#F59E0B',
+          ok:    '#10B981',
+          danger:'#EF4444',
+          bg:    '#F8FAFC',
+        }
+      }
+    }
+  }
+</script>
+<style>
+  body { font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei", sans-serif; }
+  .chip { display:inline-flex; align-items:center; padding:2px 8px; border-radius:9999px; font-size:11px; font-weight:500; }
+  table th { background:#F8FAFC; color:#475569; font-weight:600; }
+  .scroll-x { overflow-x:auto; }
+  ::-webkit-scrollbar { width:6px; height:6px; }
+  ::-webkit-scrollbar-thumb { background:#cbd5e1; border-radius:3px; }
+  .modal-mask { background: rgba(15,23,42,.5); }
+</style>
+</head>
+<body class="bg-bg min-h-screen">
+
+<!-- 顶部 -->
+<header class="bg-white border-b border-slate-200 sticky top-0 z-30">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 h-14 flex items-center justify-between">
+    <div class="flex items-center gap-2">
+      <a href="index.html" class="flex items-center gap-2 text-slate-700 hover:text-steel">
+        <svg class="w-7 h-7 text-steel" viewBox="0 0 24 24" fill="currentColor"><path d="M3 3h18v4H3zM3 10h18v4H3zM3 17h18v4H3z"/></svg>
+        <span class="font-bold hidden sm:inline">货袋子 · 企业积分中心</span>
+      </a>
+      <nav class="hidden md:flex items-center text-xs text-slate-500 ml-4 gap-1">
+        <span class="text-slate-700">企业工作台</span>
+        <span>/</span><span class="text-slate-900 font-medium">积分中心</span>
+      </nav>
+    </div>
+    <div class="flex items-center gap-3">
+      <button class="hidden sm:flex items-center gap-1 text-sm text-slate-600 hover:text-steel">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+        积分规则
+      </button>
+      <div class="flex items-center gap-2">
+        <div class="w-8 h-8 rounded-lg bg-warn text-white flex items-center justify-center text-xs font-bold">钢</div>
+        <div class="hidden sm:block">
+          <div class="text-sm font-medium text-slate-900">某钢贸有限公司</div>
+          <div class="text-xs text-slate-500">管理员 王经理</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<main class="max-w-7xl mx-auto px-4 sm:px-6 py-5">
+
+  <!-- 企业 Hero -->
+  <section class="bg-gradient-to-r from-steel to-blue-700 rounded-2xl p-5 sm:p-7 text-white shadow-xl">
+    <div class="flex flex-col lg:flex-row lg:items-center gap-5 justify-between">
+      <div class="flex items-center gap-4">
+        <div class="w-16 h-16 rounded-2xl bg-white/10 backdrop-blur flex items-center justify-center text-2xl font-bold ring-2 ring-white/20">钢</div>
+        <div>
+          <div class="flex items-center gap-2 flex-wrap">
+            <h1 class="text-xl sm:text-2xl font-bold">某钢贸有限公司</h1>
+            <span class="chip bg-warn text-white">E3 金牌企业</span>
+            <span class="chip bg-white/20 text-white">已认证</span>
+          </div>
+          <div class="text-xs sm:text-sm text-white/70 mt-1">统一社会信用代码 91310000XXXXXXXX0X · 主营品类：螺纹钢、热卷、中厚板</div>
+        </div>
+      </div>
+      <div class="flex items-end gap-6 lg:border-l lg:border-white/20 lg:pl-7">
+        <div>
+          <div class="text-xs text-white/70">企业积分余额</div>
+          <div class="text-3xl sm:text-4xl font-extrabold mt-1">38,560</div>
+          <div class="text-xs text-white/70 mt-1">≈ 服务费抵扣 ¥38.56</div>
+        </div>
+        <div class="flex flex-col gap-2">
+          <button class="px-4 py-2 rounded-lg bg-white text-steel font-medium text-sm hover:bg-slate-100" onclick="openModal('modal-redeem')">兑换权益</button>
+          <button class="px-4 py-2 rounded-lg bg-white/10 hover:bg-white/20 text-sm">明细导出</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- 升级进度 -->
+    <div class="mt-5 pt-4 border-t border-white/20">
+      <div class="flex justify-between text-xs text-white/80 mb-1">
+        <span>距 E4 行业标杆还差 <span class="font-bold text-warn">11,440</span></span>
+        <span>38,560 / 50,000</span>
+      </div>
+      <div class="h-2 rounded-full bg-white/10 overflow-hidden">
+        <div class="h-full bg-warn" style="width:77.12%"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- KPI 卡 -->
+  <section class="grid grid-cols-2 lg:grid-cols-4 gap-3 mt-4">
+    <div class="bg-white rounded-xl p-4 border border-slate-200">
+      <div class="text-xs text-slate-500">本月获得</div>
+      <div class="mt-1 text-2xl font-bold text-ok">+ 8,650</div>
+      <div class="mt-1 text-xs text-slate-400">环比 ↑ 14.2%</div>
+    </div>
+    <div class="bg-white rounded-xl p-4 border border-slate-200">
+      <div class="text-xs text-slate-500">本月消耗</div>
+      <div class="mt-1 text-2xl font-bold text-warn">- 3,200</div>
+      <div class="mt-1 text-xs text-slate-400">兑换 5 笔</div>
+    </div>
+    <div class="bg-white rounded-xl p-4 border border-slate-200">
+      <div class="text-xs text-slate-500">累计获得（终身）</div>
+      <div class="mt-1 text-2xl font-bold text-slate-900">128,560</div>
+      <div class="mt-1 text-xs text-slate-400">入驻 18 个月</div>
+    </div>
+    <div class="bg-white rounded-xl p-4 border border-slate-200">
+      <div class="text-xs text-slate-500">贡献员工数</div>
+      <div class="mt-1 text-2xl font-bold text-steel">28 / 32</div>
+      <div class="mt-1 text-xs text-slate-400">本月活跃 / 总数</div>
+    </div>
+  </section>
+
+  <!-- 图表区 -->
+  <section class="grid grid-cols-1 lg:grid-cols-3 gap-4 mt-4">
+    <div class="bg-white rounded-xl p-4 border border-slate-200 lg:col-span-2">
+      <div class="flex justify-between items-center mb-2">
+        <h3 class="font-semibold text-slate-900">月度积分趋势</h3>
+        <select class="text-xs border border-slate-200 rounded px-2 py-0.5">
+          <option>近 6 个月</option><option>近 12 个月</option>
+        </select>
+      </div>
+      <div id="chart-month" style="height:260px"></div>
+    </div>
+    <div class="bg-white rounded-xl p-4 border border-slate-200">
+      <div class="flex justify-between items-center mb-2">
+        <h3 class="font-semibold text-slate-900">来源类目占比</h3>
+        <span class="text-xs text-slate-500">本月</span>
+      </div>
+      <div id="chart-source" style="height:260px"></div>
+    </div>
+    <div class="bg-white rounded-xl p-4 border border-slate-200 lg:col-span-3">
+      <div class="flex justify-between items-center mb-2">
+        <h3 class="font-semibold text-slate-900">员工贡献 Top10</h3>
+        <span class="text-xs text-slate-500">本月，按贡献积分</span>
+      </div>
+      <div id="chart-staff" style="height:340px"></div>
+    </div>
+  </section>
+
+  <!-- 员工贡献明细 -->
+  <section class="bg-white rounded-xl border border-slate-200 mt-4">
+    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between p-4 border-b border-slate-100 gap-2">
+      <h3 class="font-semibold text-slate-900">员工贡献明细</h3>
+      <div class="flex gap-2">
+        <select class="text-sm border border-slate-300 rounded-lg px-3 py-1.5 bg-white">
+          <option>本月</option><option>上月</option><option>本季度</option><option>本年度</option>
+        </select>
+        <button class="text-sm px-3 py-1.5 rounded-lg border border-slate-300">导出</button>
+      </div>
+    </div>
+    <div class="scroll-x">
+    <table class="min-w-full text-sm">
+      <thead>
+        <tr class="text-left text-xs">
+          <th class="px-4 py-2.5">排名</th>
+          <th class="px-4 py-2.5">员工</th>
+          <th class="px-4 py-2.5">岗位</th>
+          <th class="px-4 py-2.5">拉新数</th>
+          <th class="px-4 py-2.5">发布数</th>
+          <th class="px-4 py-2.5">询/报价</th>
+          <th class="px-4 py-2.5">订单贡献</th>
+          <th class="px-4 py-2.5">贡献 EP</th>
+          <th class="px-4 py-2.5 text-right">操作</th>
+        </tr>
+      </thead>
+      <tbody id="tbody-staff"></tbody>
+    </table>
+    </div>
+  </section>
+
+  <!-- 兑换 & 待审批 -->
+  <section class="grid grid-cols-1 lg:grid-cols-3 gap-4 mt-4">
+
+    <!-- 推荐权益 -->
+    <div class="lg:col-span-2 bg-white rounded-xl border border-slate-200 p-5">
+      <div class="flex items-center justify-between mb-3">
+        <h3 class="font-semibold text-slate-900">企业可兑换权益</h3>
+        <span class="text-xs text-slate-500">EP 兑换比例：1000 EP = ¥1 服务费抵扣</span>
+      </div>
+      <div id="redeem-grid" class="grid grid-cols-1 sm:grid-cols-2 gap-3"></div>
+    </div>
+
+    <!-- 待审批 -->
+    <div class="bg-white rounded-xl border border-slate-200 p-5">
+      <div class="flex items-center justify-between mb-3">
+        <h3 class="font-semibold text-slate-900">待我审批</h3>
+        <span class="chip bg-danger/10 text-danger">3</span>
+      </div>
+      <div class="space-y-3" id="approval-list"></div>
+    </div>
+
+  </section>
+
+  <!-- 兑换记录 -->
+  <section class="bg-white rounded-xl border border-slate-200 mt-4">
+    <div class="flex items-center justify-between p-4 border-b border-slate-100">
+      <h3 class="font-semibold text-slate-900">兑换记录</h3>
+      <button class="text-sm text-steel">查看全部 ›</button>
+    </div>
+    <div class="scroll-x">
+    <table class="min-w-full text-sm">
+      <thead>
+        <tr class="text-left text-xs">
+          <th class="px-4 py-2.5">兑换单号</th>
+          <th class="px-4 py-2.5">权益</th>
+          <th class="px-4 py-2.5">消耗 EP</th>
+          <th class="px-4 py-2.5">申请人</th>
+          <th class="px-4 py-2.5">状态</th>
+          <th class="px-4 py-2.5">时间</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr class="border-t border-slate-100"><td class="px-4 py-2.5 font-mono text-xs">EX-202605-022</td><td class="px-4 py-2.5">服务费抵扣 100 元</td><td class="px-4 py-2.5 text-warn font-medium">100,000</td><td class="px-4 py-2.5">王经理</td><td class="px-4 py-2.5"><span class="chip bg-ok/10 text-ok">已完成</span></td><td class="px-4 py-2.5 text-xs text-slate-500">2026-05-21 16:21</td></tr>
+        <tr class="border-t border-slate-100"><td class="px-4 py-2.5 font-mono text-xs">EX-202605-019</td><td class="px-4 py-2.5">首页 Banner 7 天</td><td class="px-4 py-2.5 text-warn font-medium">80,000</td><td class="px-4 py-2.5">李运营</td><td class="px-4 py-2.5"><span class="chip bg-steel/10 text-steel">投放中</span></td><td class="px-4 py-2.5 text-xs text-slate-500">2026-05-18 11:08</td></tr>
+        <tr class="border-t border-slate-100"><td class="px-4 py-2.5 font-mono text-xs">EX-202605-015</td><td class="px-4 py-2.5">电子签章 100 次包</td><td class="px-4 py-2.5 text-warn font-medium">30,000</td><td class="px-4 py-2.5">张工</td><td class="px-4 py-2.5"><span class="chip bg-ok/10 text-ok">已完成</span></td><td class="px-4 py-2.5 text-xs text-slate-500">2026-05-15 14:55</td></tr>
+        <tr class="border-t border-slate-100"><td class="px-4 py-2.5 font-mono text-xs">EX-202605-008</td><td class="px-4 py-2.5">资源置顶位 3 个</td><td class="px-4 py-2.5 text-warn font-medium">15,000</td><td class="px-4 py-2.5">陈销售</td><td class="px-4 py-2.5"><span class="chip bg-warn/10 text-warn">待审批</span></td><td class="px-4 py-2.5 text-xs text-slate-500">2026-05-12 09:33</td></tr>
+        <tr class="border-t border-slate-100"><td class="px-4 py-2.5 font-mono text-xs">EX-202605-002</td><td class="px-4 py-2.5">仓储抵扣券 500 元</td><td class="px-4 py-2.5 text-warn font-medium">50,000</td><td class="px-4 py-2.5">王经理</td><td class="px-4 py-2.5"><span class="chip bg-slate-200 text-slate-600">已驳回</span></td><td class="px-4 py-2.5 text-xs text-slate-500">2026-05-03 17:20</td></tr>
+      </tbody>
+    </table>
+    </div>
+  </section>
+
+</main>
+
+<!-- 兑换弹窗 -->
+<div id="modal-redeem" class="fixed inset-0 z-40 hidden flex items-center justify-center">
+  <div class="absolute inset-0 modal-mask" onclick="closeModal('modal-redeem')"></div>
+  <div class="relative bg-white rounded-2xl w-[92%] max-w-md shadow-2xl">
+    <div class="px-5 py-4 border-b border-slate-100 flex justify-between items-center">
+      <h3 class="font-bold text-slate-900">兑换权益</h3>
+      <button onclick="closeModal('modal-redeem')" class="p-1 hover:bg-slate-100 rounded">
+        <svg class="w-5 h-5 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+      </button>
+    </div>
+    <div class="p-5 space-y-3">
+      <div>
+        <label class="text-xs text-slate-500">兑换类型</label>
+        <select class="mt-1 w-full text-sm border border-slate-300 rounded-lg px-3 py-2 bg-white">
+          <option>服务费抵扣券</option><option>首页 Banner</option><option>资源置顶位</option><option>电子签章包</option><option>仓储 / 物流优惠券</option>
+        </select>
+      </div>
+      <div>
+        <label class="text-xs text-slate-500">数量</label>
+        <input type="number" value="1" class="mt-1 w-full text-sm border border-slate-300 rounded-lg px-3 py-2">
+      </div>
+      <div class="flex justify-between text-sm bg-slate-50 rounded-lg p-3">
+        <span class="text-slate-500">消耗 EP</span>
+        <span class="font-bold text-warn">100,000</span>
+      </div>
+      <div class="flex justify-between text-sm">
+        <span class="text-slate-500">兑换后余额</span>
+        <span class="text-slate-900">-61,440 <span class="text-danger text-xs">余额不足</span></span>
+      </div>
+      <div class="text-xs text-slate-500 bg-warn/5 p-3 rounded-lg">大额兑换（≥ 50,000 EP）将进入企业法人审批流程，约 1 工作日完成审核。</div>
+    </div>
+    <div class="px-5 py-4 border-t border-slate-100 flex justify-end gap-2">
+      <button onclick="closeModal('modal-redeem')" class="text-sm px-4 py-2 rounded-lg border border-slate-300">取消</button>
+      <button class="text-sm px-4 py-2 rounded-lg bg-steel text-white" disabled style="opacity:.5">余额不足</button>
+    </div>
+  </div>
+</div>
+
+<script>
+/* Mock：员工贡献 */
+const STAFFS = [
+  {name:'张工',role:'采购经理',av:'#1E40AF',new:8,pub:42,quote:128,order:'¥420万',ep:8580},
+  {name:'李采购',role:'采购专员',av:'#10B981',new:5,pub:36,quote:98,order:'¥280万',ep:6240},
+  {name:'王销售',role:'销售总监',av:'#F59E0B',new:12,pub:28,quote:86,order:'¥680万',ep:5980},
+  {name:'陈销售',role:'销售经理',av:'#EF4444',new:6,pub:31,quote:72,order:'¥320万',ep:4820},
+  {name:'刘工',role:'仓储主管',av:'#6366F1',new:2,pub:20,quote:42,order:'¥180万',ep:3260},
+  {name:'孙采购',role:'采购专员',av:'#1E40AF',new:4,pub:18,quote:55,order:'¥150万',ep:2980},
+  {name:'赵工',role:'技术员',av:'#10B981',new:3,pub:25,quote:31,order:'-',ep:2410},
+  {name:'周经理',role:'客服经理',av:'#F59E0B',new:1,pub:8,quote:22,order:'-',ep:1820},
+  {name:'吴销售',role:'销售实习',av:'#EF4444',new:2,pub:12,quote:18,order:'¥45万',ep:1440},
+  {name:'郑财务',role:'财务',av:'#6366F1',new:0,pub:5,quote:6,order:'-',ep:980},
+];
+
+document.getElementById('tbody-staff').innerHTML = STAFFS.map((s,i)=>{
+  const medal = i===0?'🥇':i===1?'🥈':i===2?'🥉':`<span class="text-slate-400 font-medium">${i+1}</span>`;
+  return `<tr class="border-t border-slate-100 hover:bg-slate-50">
+    <td class="px-4 py-2.5">${medal}</td>
+    <td class="px-4 py-2.5">
+      <div class="flex items-center gap-2">
+        <div class="w-8 h-8 rounded-full text-white text-xs font-medium flex items-center justify-center" style="background:${s.av}">${s.name.charAt(0)}</div>
+        <span class="font-medium">${s.name}</span>
+      </div>
+    </td>
+    <td class="px-4 py-2.5 text-slate-500">${s.role}</td>
+    <td class="px-4 py-2.5">${s.new}</td>
+    <td class="px-4 py-2.5">${s.pub}</td>
+    <td class="px-4 py-2.5">${s.quote}</td>
+    <td class="px-4 py-2.5 font-medium">${s.order}</td>
+    <td class="px-4 py-2.5 font-bold text-warn">${s.ep.toLocaleString()}</td>
+    <td class="px-4 py-2.5 text-right"><button class="text-steel hover:underline text-xs">奖励</button></td>
+  </tr>`;
+}).join('');
+
+/* 可兑换权益 */
+const REDEEMS = [
+  {icon:'💰',name:'服务费抵扣券',desc:'用于平台服务费抵扣（10/50/100元面值）',ep:100000,tag:'热门',tagCls:'bg-danger/10 text-danger'},
+  {icon:'📣',name:'首页 Banner 7 天',desc:'PC + 小程序首页轮播位',ep:80000,tag:'限量',tagCls:'bg-warn/10 text-warn'},
+  {icon:'⬆️',name:'资源置顶位（3 个）',desc:'品类页置顶 7 天',ep:15000,tag:'推荐',tagCls:'bg-ok/10 text-ok'},
+  {icon:'✍️',name:'电子签章 100 次包',desc:'电子合同/订单签署',ep:30000,tag:'',tagCls:''},
+  {icon:'📦',name:'仓储抵扣券 500 元',desc:'平台合作仓储',ep:50000,tag:'',tagCls:''},
+  {icon:'🚚',name:'物流抵扣券 300 元',desc:'平台合作承运商',ep:30000,tag:'新',tagCls:'bg-steel/10 text-steel'},
+];
+
+document.getElementById('redeem-grid').innerHTML = REDEEMS.map(r=>`
+  <div class="border border-slate-200 rounded-xl p-4 hover:border-steel/40 hover:shadow-md transition cursor-pointer">
+    <div class="flex items-start gap-3">
+      <div class="w-10 h-10 rounded-lg bg-slate-50 flex items-center justify-center text-xl shrink-0">${r.icon}</div>
+      <div class="flex-1 min-w-0">
+        <div class="flex items-center gap-1.5">
+          <h4 class="font-medium text-slate-900 text-sm truncate">${r.name}</h4>
+          ${r.tag?`<span class="chip ${r.tagCls} shrink-0">${r.tag}</span>`:''}
+        </div>
+        <p class="text-xs text-slate-500 mt-0.5">${r.desc}</p>
+      </div>
+    </div>
+    <div class="mt-3 flex items-center justify-between">
+      <span class="text-warn font-bold">${r.ep.toLocaleString()} <span class="text-xs font-normal text-slate-500">EP</span></span>
+      <button class="text-xs px-3 py-1 rounded-lg bg-steel text-white" onclick="openModal('modal-redeem')">立即兑换</button>
+    </div>
+  </div>
+`).join('');
+
+/* 待审批 */
+const APPROVALS = [
+  {who:'陈销售',item:'资源置顶位 3 个',ep:15000,time:'10 分钟前'},
+  {who:'李运营',item:'首页 Banner 7 天',ep:80000,time:'2 小时前'},
+  {who:'张工',item:'电子签章 100 次包',ep:30000,time:'昨天'},
+];
+
+document.getElementById('approval-list').innerHTML = APPROVALS.map(a=>`
+  <div class="p-3 border border-slate-200 rounded-xl">
+    <div class="flex items-center justify-between">
+      <div class="flex items-center gap-2">
+        <div class="w-7 h-7 rounded-full bg-steel/10 text-steel text-xs font-medium flex items-center justify-center">${a.who.charAt(0)}</div>
+        <span class="text-sm font-medium">${a.who}</span>
+      </div>
+      <span class="text-[11px] text-slate-400">${a.time}</span>
+    </div>
+    <div class="mt-1.5 text-sm text-slate-900">申请：${a.item}</div>
+    <div class="text-xs text-warn font-medium mt-0.5">消耗 ${a.ep.toLocaleString()} EP</div>
+    <div class="mt-2 flex gap-2">
+      <button class="flex-1 text-xs py-1.5 rounded-lg bg-ok text-white">批准</button>
+      <button class="flex-1 text-xs py-1.5 rounded-lg border border-danger text-danger">驳回</button>
+    </div>
+  </div>
+`).join('');
+
+/* 弹窗 */
+function openModal(id){document.getElementById(id).classList.remove('hidden');document.body.style.overflow='hidden';}
+function closeModal(id){document.getElementById(id).classList.add('hidden');document.body.style.overflow='';}
+
+/* 图表 */
+const c1 = echarts.init(document.getElementById('chart-month'));
+c1.setOption({
+  tooltip:{trigger:'axis'},
+  legend:{data:['获得','消耗'],right:0,textStyle:{fontSize:11}},
+  grid:{left:50,right:10,top:30,bottom:30},
+  xAxis:{type:'category',data:['2025-12','2026-01','2026-02','2026-03','2026-04','2026-05'],axisLine:{lineStyle:{color:'#cbd5e1'}}},
+  yAxis:{type:'value',splitLine:{lineStyle:{color:'#f1f5f9'}}},
+  series:[
+    {name:'获得',type:'bar',data:[5200,6800,7100,7800,7600,8650],itemStyle:{color:'#1E40AF',borderRadius:[4,4,0,0]},barWidth:24},
+    {name:'消耗',type:'bar',data:[1800,2500,2800,3100,2700,3200],itemStyle:{color:'#F59E0B',borderRadius:[4,4,0,0]},barWidth:24}
+  ]
+});
+
+const c2 = echarts.init(document.getElementById('chart-source'));
+c2.setOption({
+  tooltip:{trigger:'item',formatter:'{b}<br/>{c} EP ({d}%)'},
+  legend:{bottom:0,textStyle:{fontSize:11}},
+  series:[{
+    type:'pie',radius:['38%','65%'],center:['50%','42%'],
+    data:[
+      {value:3200,name:'交易类'},
+      {value:1800,name:'拉新类'},
+      {value:1500,name:'活跃聚合'},
+      {value:1200,name:'UGC类'},
+      {value:950,name:'物流仓储'}
+    ],
+    label:{formatter:'{b}\n{d}%',fontSize:10},
+    itemStyle:{borderRadius:4,borderColor:'#fff',borderWidth:2},
+    color:['#1E40AF','#F59E0B','#10B981','#6366F1','#EF4444']
+  }]
+});
+
+const c3 = echarts.init(document.getElementById('chart-staff'));
+c3.setOption({
+  tooltip:{trigger:'axis',axisPointer:{type:'shadow'}},
+  grid:{left:80,right:30,top:10,bottom:30},
+  xAxis:{type:'value',axisLine:{lineStyle:{color:'#cbd5e1'}},splitLine:{lineStyle:{color:'#f1f5f9'}}},
+  yAxis:{type:'category',data:STAFFS.map(s=>s.name).reverse(),axisLine:{lineStyle:{color:'#cbd5e1'}}},
+  series:[{
+    type:'bar',
+    data:STAFFS.map(s=>s.ep).reverse(),
+    barWidth:18,
+    itemStyle:{color:(p)=>{
+      const colors=['#1E40AF','#1E40AF','#1E40AF','#1E40AF','#3B82F6','#3B82F6','#60A5FA','#60A5FA','#93C5FD','#93C5FD'];
+      return colors[colors.length-1-p.dataIndex];
+    },borderRadius:[0,4,4,0]},
+    label:{show:true,position:'right',formatter:'{c}',fontSize:11,color:'#475569'}
+  }]
+});
+
+window.addEventListener('resize',()=>{c1.resize();c2.resize();c3.resize();});
+</script>
+</body>
+</html>
