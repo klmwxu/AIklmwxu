@@ -1,0 +1,1066 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>货袋子 · 积分运营后台</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://cdn.jsdelivr.net/npm/echarts@5/dist/echarts.min.js"></script>
+<script>
+  tailwind.config = {
+    theme: {
+      extend: {
+        colors: {
+          steel: '#1E40AF',
+          steelDark: '#1E3A8A',
+          warn:  '#F59E0B',
+          ok:    '#10B981',
+          danger:'#EF4444',
+          bg:    '#F8FAFC',
+        }
+      }
+    }
+  }
+</script>
+<style>
+  body { font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei", sans-serif; }
+  .sidebar-item.active { background: rgba(30,64,175,.08); color: #1E40AF; font-weight: 600; border-left: 3px solid #1E40AF; }
+  .sidebar-item { border-left: 3px solid transparent; }
+  table th { background: #F8FAFC; color: #475569; font-weight: 600; }
+  ::-webkit-scrollbar { width: 6px; height: 6px; }
+  ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 3px; }
+  .scroll-x { overflow-x: auto; }
+  .chip { display:inline-flex; align-items:center; padding: 2px 8px; border-radius: 9999px; font-size: 11px; font-weight: 500; }
+  .modal-mask { background: rgba(15,23,42,.5); }
+  details[open] summary svg { transform: rotate(180deg); }
+</style>
+</head>
+<body class="bg-bg min-h-screen">
+
+<!-- 顶部导航 -->
+<header class="bg-white border-b border-slate-200 sticky top-0 z-30">
+  <div class="px-4 sm:px-6 h-14 flex items-center justify-between">
+    <div class="flex items-center gap-2">
+      <button class="md:hidden p-1 -ml-1" onclick="toggleSidebar()">
+        <svg class="w-6 h-6 text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
+      </button>
+      <svg class="w-7 h-7 text-steel" viewBox="0 0 24 24" fill="currentColor"><path d="M3 3h18v4H3zM3 10h18v4H3zM3 17h18v4H3z"/></svg>
+      <div class="font-bold text-slate-900 hidden sm:block">货袋子 · 积分运营后台</div>
+      <nav class="hidden lg:flex items-center text-xs text-slate-500 ml-6 gap-1">
+        <a href="index.html" class="hover:text-steel">原型导航</a>
+        <span>/</span><span class="text-slate-700">积分中心</span>
+        <span>/</span><span id="crumb-current" class="text-slate-900 font-medium">数据看板</span>
+      </nav>
+    </div>
+    <div class="flex items-center gap-3">
+      <div class="relative hidden md:block">
+        <input class="w-64 pl-9 pr-3 py-1.5 text-sm rounded-lg bg-slate-100 focus:bg-white focus:ring-2 focus:ring-steel/30 focus:outline-none border border-transparent focus:border-steel/30" placeholder="搜索动作编码 / 账号 / 流水号">
+        <svg class="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-4.35-4.35M11 19a8 8 0 100-16 8 8 0 000 16z"/></svg>
+      </div>
+      <button class="relative p-1.5 hover:bg-slate-100 rounded-lg">
+        <svg class="w-5 h-5 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.4-1.4A2 2 0 0118 14.2V11a6 6 0 10-12 0v3.2a2 2 0 01-.6 1.4L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/></svg>
+        <span class="absolute top-0 right-0 w-2 h-2 rounded-full bg-danger"></span>
+      </button>
+      <div class="flex items-center gap-2">
+        <div class="w-8 h-8 rounded-full bg-steel text-white flex items-center justify-center text-xs font-medium">运营</div>
+        <span class="text-sm text-slate-700 hidden sm:inline">admin@huodaizi</span>
+      </div>
+    </div>
+  </div>
+</header>
+
+<div class="flex">
+
+<!-- Sidebar -->
+<aside id="sidebar" class="w-56 bg-white border-r border-slate-200 min-h-[calc(100vh-56px)] hidden md:block">
+  <nav class="py-4 text-sm">
+    <button class="sidebar-item active w-full text-left px-4 py-2.5 flex items-center gap-2" data-tab="dashboard" onclick="switchTab('dashboard')">
+      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l9-9 9 9M5 10v10h14V10"/></svg>
+      数据看板
+    </button>
+    <button class="sidebar-item w-full text-left px-4 py-2.5 flex items-center gap-2" data-tab="rules" onclick="switchTab('rules')">
+      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>
+      积分规则
+    </button>
+    <button class="sidebar-item w-full text-left px-4 py-2.5 flex items-center gap-2" data-tab="records" onclick="switchTab('records')">
+      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h7"/></svg>
+      积分流水
+    </button>
+    <button class="sidebar-item w-full text-left px-4 py-2.5 flex items-center gap-2" data-tab="risk" onclick="switchTab('risk')">
+      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v3m0 4h.01M5 19h14a2 2 0 001.74-3l-7-12a2 2 0 00-3.48 0l-7 12A2 2 0 005 19z"/></svg>
+      风控异常
+      <span class="ml-auto text-[10px] bg-danger text-white rounded px-1.5 py-0.5">12</span>
+    </button>
+    <button class="sidebar-item w-full text-left px-4 py-2.5 flex items-center gap-2" data-tab="mall" onclick="switchTab('mall')">
+      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
+      商城管理
+    </button>
+    <button class="sidebar-item w-full text-left px-4 py-2.5 flex items-center gap-2" data-tab="levels" onclick="switchTab('levels')">
+      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 3v18l7-5 7 5V3z"/></svg>
+      会员等级
+      <span class="ml-auto text-[10px] bg-warn text-white rounded px-1.5 py-0.5">企业</span>
+    </button>
+
+    <div class="mt-6 px-4 text-xs uppercase text-slate-400">运营辅助</div>
+    <button class="sidebar-item w-full text-left px-4 py-2.5 flex items-center gap-2 text-slate-500">
+      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4M12 21a9 9 0 110-18 9 9 0 010 18z"/></svg>
+      审核中心
+    </button>
+    <button class="sidebar-item w-full text-left px-4 py-2.5 flex items-center gap-2 text-slate-500">
+      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/></svg>
+      系统设置
+    </button>
+  </nav>
+</aside>
+
+<!-- 主内容 -->
+<main class="flex-1 p-4 sm:p-6 max-w-full min-w-0">
+
+  <!-- ========== Tab 1: 数据看板 ========== -->
+  <section data-tab-content="dashboard">
+    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-4">
+      <h2 class="text-xl font-bold text-slate-900">数据看板</h2>
+      <div class="flex items-center gap-2">
+        <select class="text-sm border border-slate-300 rounded-lg px-3 py-1.5 bg-white">
+          <option>近 7 天</option><option selected>近 30 天</option><option>近 90 天</option><option>本年</option>
+        </select>
+        <button class="text-sm px-3 py-1.5 rounded-lg bg-steel text-white hover:bg-steelDark">导出报表</button>
+      </div>
+    </div>
+
+    <!-- KPI -->
+    <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 mb-5">
+      <div class="bg-white rounded-xl p-4 border border-slate-200">
+        <div class="text-xs text-slate-500">本月发放积分</div>
+        <div class="mt-1 text-2xl font-bold text-slate-900">2,348,560</div>
+        <div class="mt-1 text-xs text-ok">↑ 12.3% 环比</div>
+      </div>
+      <div class="bg-white rounded-xl p-4 border border-slate-200">
+        <div class="text-xs text-slate-500">本月消耗积分</div>
+        <div class="mt-1 text-2xl font-bold text-slate-900">1,012,330</div>
+        <div class="mt-1 text-xs text-warn">消耗率 43.1%</div>
+      </div>
+      <div class="bg-white rounded-xl p-4 border border-slate-200">
+        <div class="text-xs text-slate-500">当前积分负债余额</div>
+        <div class="mt-1 text-2xl font-bold text-slate-900">15.6M</div>
+        <div class="mt-1 text-xs text-slate-500">≈ 财务计提 ¥15,600</div>
+      </div>
+      <div class="bg-white rounded-xl p-4 border border-slate-200">
+        <div class="text-xs text-slate-500">活跃企业 / 个人</div>
+        <div class="mt-1 text-2xl font-bold text-slate-900">1,284 / 18,567</div>
+        <div class="mt-1 text-xs text-ok">↑ 18 家新认证</div>
+      </div>
+    </div>
+
+    <!-- 图表 -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+      <div class="bg-white rounded-xl p-4 border border-slate-200">
+        <div class="flex justify-between items-center mb-2">
+          <h3 class="font-semibold text-slate-900">积分发放 / 消耗趋势</h3>
+          <span class="text-xs text-slate-500">近 30 天</span>
+        </div>
+        <div id="chart-trend" style="height:280px"></div>
+      </div>
+      <div class="bg-white rounded-xl p-4 border border-slate-200">
+        <div class="flex justify-between items-center mb-2">
+          <h3 class="font-semibold text-slate-900">TOP10 动作发放量</h3>
+          <span class="text-xs text-slate-500">单位：万</span>
+        </div>
+        <div id="chart-top10" style="height:280px"></div>
+      </div>
+      <div class="bg-white rounded-xl p-4 border border-slate-200">
+        <div class="flex justify-between items-center mb-2">
+          <h3 class="font-semibold text-slate-900">来源类目占比</h3>
+          <span class="text-xs text-slate-500">PP + EP 合计</span>
+        </div>
+        <div id="chart-pie" style="height:280px"></div>
+      </div>
+      <div class="bg-white rounded-xl p-4 border border-slate-200">
+        <div class="flex justify-between items-center mb-2">
+          <h3 class="font-semibold text-slate-900">用户等级分布</h3>
+          <span class="text-xs text-slate-500">个人 + 企业</span>
+        </div>
+        <div id="chart-levels" style="height:280px"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========== Tab 2: 积分规则 ========== -->
+  <section data-tab-content="rules" class="hidden">
+    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-4">
+      <h2 class="text-xl font-bold text-slate-900">积分规则配置</h2>
+      <div class="flex items-center gap-2">
+        <button class="text-sm px-3 py-1.5 rounded-lg border border-slate-300 bg-white hover:bg-slate-50">批量导入</button>
+        <button class="text-sm px-3 py-1.5 rounded-lg bg-steel text-white hover:bg-steelDark" onclick="openModal('modal-rule')">
+          + 新建动作
+        </button>
+      </div>
+    </div>
+
+    <!-- 筛选区 -->
+    <div class="bg-white rounded-xl p-4 border border-slate-200 mb-4">
+      <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3">
+        <div>
+          <label class="text-xs text-slate-500">类目</label>
+          <select id="f-cat" class="mt-1 w-full text-sm border border-slate-300 rounded-lg px-2 py-1.5 bg-white">
+            <option value="">全部</option>
+            <option>拉新 (AC)</option><option>认证 (ON)</option><option>活跃 (RE)</option>
+            <option>UGC (UG)</option><option>交易 (TR)</option><option>物流 (LG)</option>
+            <option>企业 (EN)</option><option>营销 (MK)</option><option>反馈 (FB)</option>
+          </select>
+        </div>
+        <div>
+          <label class="text-xs text-slate-500">归属</label>
+          <select id="f-owner" class="mt-1 w-full text-sm border border-slate-300 rounded-lg px-2 py-1.5 bg-white">
+            <option value="">全部</option><option>个人</option><option>企业</option><option>双发</option>
+          </select>
+        </div>
+        <div>
+          <label class="text-xs text-slate-500">目标</label>
+          <select id="f-goal" class="mt-1 w-full text-sm border border-slate-300 rounded-lg px-2 py-1.5 bg-white">
+            <option value="">全部</option><option>A 拉新</option><option>R 活跃</option><option>C 转化</option>
+          </select>
+        </div>
+        <div>
+          <label class="text-xs text-slate-500">状态</label>
+          <select id="f-status" class="mt-1 w-full text-sm border border-slate-300 rounded-lg px-2 py-1.5 bg-white">
+            <option value="">全部</option><option>启用</option><option>停用</option>
+          </select>
+        </div>
+        <div class="md:col-span-1 col-span-2">
+          <label class="text-xs text-slate-500">关键字</label>
+          <input id="f-kw" class="mt-1 w-full text-sm border border-slate-300 rounded-lg px-2 py-1.5 bg-white" placeholder="编码 / 名称">
+        </div>
+        <div class="flex items-end gap-2 col-span-2 md:col-span-1">
+          <button onclick="renderRules()" class="flex-1 text-sm px-3 py-1.5 rounded-lg bg-steel text-white">查询</button>
+          <button onclick="resetFilter()" class="flex-1 text-sm px-3 py-1.5 rounded-lg border border-slate-300 bg-white">重置</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- 表格 -->
+    <div class="bg-white rounded-xl border border-slate-200 overflow-hidden">
+      <div class="scroll-x">
+      <table class="min-w-full text-sm">
+        <thead>
+          <tr class="text-left text-xs">
+            <th class="px-3 py-2.5">编码</th>
+            <th class="px-3 py-2.5">名称</th>
+            <th class="px-3 py-2.5">触发端</th>
+            <th class="px-3 py-2.5 cursor-pointer">PP <span class="text-slate-300">↕</span></th>
+            <th class="px-3 py-2.5 cursor-pointer">EP <span class="text-slate-300">↕</span></th>
+            <th class="px-3 py-2.5">上限</th>
+            <th class="px-3 py-2.5">归属</th>
+            <th class="px-3 py-2.5">目标</th>
+            <th class="px-3 py-2.5">状态</th>
+            <th class="px-3 py-2.5 text-right">操作</th>
+          </tr>
+        </thead>
+        <tbody id="tbody-rules"></tbody>
+      </table>
+      </div>
+      <!-- 分页 -->
+      <div class="flex items-center justify-between p-3 border-t border-slate-100 text-sm text-slate-500">
+        <span>共 <span id="rules-total" class="text-slate-900 font-medium">80</span> 条</span>
+        <div class="flex items-center gap-1">
+          <button class="px-2.5 py-1 rounded border border-slate-200 hover:bg-slate-50">‹</button>
+          <button class="px-2.5 py-1 rounded bg-steel text-white">1</button>
+          <button class="px-2.5 py-1 rounded border border-slate-200 hover:bg-slate-50">2</button>
+          <button class="px-2.5 py-1 rounded border border-slate-200 hover:bg-slate-50">3</button>
+          <button class="px-2.5 py-1 rounded border border-slate-200 hover:bg-slate-50">›</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========== Tab 3: 积分流水 ========== -->
+  <section data-tab-content="records" class="hidden">
+    <h2 class="text-xl font-bold text-slate-900 mb-4">积分流水</h2>
+
+    <div class="bg-white rounded-xl p-4 border border-slate-200 mb-4 grid grid-cols-2 md:grid-cols-5 gap-3">
+      <div><label class="text-xs text-slate-500">账户类型</label><select class="mt-1 w-full text-sm border border-slate-300 rounded-lg px-2 py-1.5 bg-white"><option>全部</option><option>个人 PP</option><option>企业 EP</option></select></div>
+      <div><label class="text-xs text-slate-500">方向</label><select class="mt-1 w-full text-sm border border-slate-300 rounded-lg px-2 py-1.5 bg-white"><option>全部</option><option>收入 +</option><option>支出 -</option></select></div>
+      <div><label class="text-xs text-slate-500">动作编码</label><input class="mt-1 w-full text-sm border border-slate-300 rounded-lg px-2 py-1.5 bg-white" placeholder="如 PT_AC_01"></div>
+      <div><label class="text-xs text-slate-500">状态</label><select class="mt-1 w-full text-sm border border-slate-300 rounded-lg px-2 py-1.5 bg-white"><option>全部</option><option>成功</option><option>冻结</option><option>已回收</option></select></div>
+      <div class="flex items-end"><button class="w-full text-sm px-3 py-1.5 rounded-lg bg-steel text-white">查询</button></div>
+    </div>
+
+    <div class="bg-white rounded-xl border border-slate-200 overflow-hidden">
+      <div class="scroll-x">
+      <table class="min-w-full text-sm">
+        <thead>
+          <tr class="text-left text-xs">
+            <th class="px-3 py-2.5">流水号</th>
+            <th class="px-3 py-2.5">账户</th>
+            <th class="px-3 py-2.5">动作</th>
+            <th class="px-3 py-2.5">方向</th>
+            <th class="px-3 py-2.5">数值</th>
+            <th class="px-3 py-2.5">业务单号</th>
+            <th class="px-3 py-2.5">状态</th>
+            <th class="px-3 py-2.5">时间</th>
+            <th class="px-3 py-2.5 text-right">操作</th>
+          </tr>
+        </thead>
+        <tbody id="tbody-records"></tbody>
+      </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========== Tab 4: 风控异常 ========== -->
+  <section data-tab-content="risk" class="hidden">
+    <h2 class="text-xl font-bold text-slate-900 mb-4">风控异常</h2>
+
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-3 mb-4">
+      <div class="bg-white rounded-xl p-4 border border-slate-200 border-l-4 border-l-danger">
+        <div class="text-xs text-slate-500">高危账号</div>
+        <div class="mt-1 text-2xl font-bold text-danger">12</div>
+      </div>
+      <div class="bg-white rounded-xl p-4 border border-slate-200 border-l-4 border-l-warn">
+        <div class="text-xs text-slate-500">疑似刷分</div>
+        <div class="mt-1 text-2xl font-bold text-warn">38</div>
+      </div>
+      <div class="bg-white rounded-xl p-4 border border-slate-200 border-l-4 border-l-steel">
+        <div class="text-xs text-slate-500">已回收积分</div>
+        <div class="mt-1 text-2xl font-bold text-steel">128,560</div>
+      </div>
+      <div class="bg-white rounded-xl p-4 border border-slate-200 border-l-4 border-l-ok">
+        <div class="text-xs text-slate-500">规则命中率</div>
+        <div class="mt-1 text-2xl font-bold text-ok">94.2%</div>
+      </div>
+    </div>
+
+    <div class="bg-white rounded-xl border border-slate-200 overflow-hidden">
+      <div class="scroll-x">
+      <table class="min-w-full text-sm">
+        <thead>
+          <tr class="text-left text-xs">
+            <th class="px-3 py-2.5">账号</th>
+            <th class="px-3 py-2.5">触发规则</th>
+            <th class="px-3 py-2.5">风险等级</th>
+            <th class="px-3 py-2.5">累计可疑积分</th>
+            <th class="px-3 py-2.5">处理状态</th>
+            <th class="px-3 py-2.5">最后触发</th>
+            <th class="px-3 py-2.5 text-right">操作</th>
+          </tr>
+        </thead>
+        <tbody id="tbody-risk"></tbody>
+      </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========== Tab 5: 商城管理 ========== -->
+  <section data-tab-content="mall" class="hidden">
+    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-4">
+      <h2 class="text-xl font-bold text-slate-900">商城管理</h2>
+      <div class="flex gap-2">
+        <select class="text-sm border border-slate-300 rounded-lg px-3 py-1.5 bg-white">
+          <option>全部</option><option>实物礼品</option><option>虚拟权益</option><option>服务费抵扣</option><option>资源位</option>
+        </select>
+        <button class="text-sm px-3 py-1.5 rounded-lg bg-steel text-white">+ 新增商品</button>
+      </div>
+    </div>
+
+    <div id="mall-grid" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3"></div>
+
+    <!-- 空状态示例（默认隐藏） -->
+    <div id="mall-empty" class="hidden bg-white rounded-xl border border-slate-200 p-12 text-center mt-4">
+      <svg class="w-16 h-16 mx-auto text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0l-2 9H6l-2-9m16 0H4"/></svg>
+      <p class="mt-3 text-slate-500">还没有商品，<a class="text-steel cursor-pointer">点此创建第一个商品</a></p>
+    </div>
+  </section>
+
+  <!-- ========== Tab 6: 会员等级（仅企业） ========== -->
+  <section data-tab-content="levels" class="hidden">
+    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-4">
+      <div>
+        <h2 class="text-xl font-bold text-slate-900">企业会员等级</h2>
+        <p class="text-xs text-slate-500 mt-0.5">会员体系仅企业存在，个人无会员等级；通过积分倍率 + 折扣率撬动企业活跃</p>
+      </div>
+      <div class="flex items-center gap-2">
+        <button class="text-sm px-3 py-1.5 rounded-lg border border-slate-300 bg-white">手动授级</button>
+        <button class="text-sm px-3 py-1.5 rounded-lg bg-steel text-white">保存配置</button>
+      </div>
+    </div>
+
+    <!-- 4 张等级卡片 -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-3 mb-5">
+
+      <!-- M1 普通 -->
+      <div class="bg-white rounded-2xl p-5 border border-slate-200 relative overflow-hidden">
+        <div class="absolute top-0 right-0 w-24 h-24 -mr-8 -mt-8 rounded-full bg-slate-100"></div>
+        <div class="relative">
+          <div class="flex items-center justify-between">
+            <span class="chip bg-slate-200 text-slate-600">M1</span>
+            <span class="text-2xl">🪪</span>
+          </div>
+          <h3 class="mt-3 font-bold text-slate-900">普通会员</h3>
+          <p class="text-xs text-slate-500 mt-0.5">完成企业认证即获得</p>
+          <div class="mt-4 grid grid-cols-2 gap-2 text-center">
+            <div class="p-2 rounded-lg bg-slate-50">
+              <div class="text-[10px] text-slate-500">积分倍率</div>
+              <div class="text-lg font-bold text-slate-700">1.0×</div>
+            </div>
+            <div class="p-2 rounded-lg bg-slate-50">
+              <div class="text-[10px] text-slate-500">折扣率</div>
+              <div class="text-lg font-bold text-slate-700">无</div>
+            </div>
+          </div>
+          <div class="mt-3 text-xs text-slate-500 space-y-1">
+            <div>· 月度置顶位 1 个</div>
+            <div>· 电子签章 5 次/月</div>
+            <div>· 自助文档支持</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- M2 银卡 -->
+      <div class="bg-gradient-to-br from-slate-50 to-slate-100 rounded-2xl p-5 border border-slate-300 relative overflow-hidden">
+        <div class="absolute top-0 right-0 w-24 h-24 -mr-8 -mt-8 rounded-full bg-slate-300/30"></div>
+        <div class="relative">
+          <div class="flex items-center justify-between">
+            <span class="chip bg-slate-400 text-white">M2</span>
+            <span class="text-2xl">🥈</span>
+          </div>
+          <h3 class="mt-3 font-bold text-slate-900">银卡会员</h3>
+          <p class="text-xs text-slate-500 mt-0.5">12 月 EP ≥ 5,000 或 年 GMV ≥ 100 万</p>
+          <div class="mt-4 grid grid-cols-2 gap-2 text-center">
+            <div class="p-2 rounded-lg bg-white">
+              <div class="text-[10px] text-slate-500">积分倍率</div>
+              <div class="text-lg font-bold text-steel">1.2×</div>
+            </div>
+            <div class="p-2 rounded-lg bg-white">
+              <div class="text-[10px] text-slate-500">服务费</div>
+              <div class="text-lg font-bold text-ok">9.5 折</div>
+            </div>
+          </div>
+          <div class="mt-3 text-xs text-slate-500 space-y-1">
+            <div>· 月度置顶位 3 个</div>
+            <div>· 电子签章 20 次/月</div>
+            <div>· 5×8 群客服</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- M3 金卡 -->
+      <div class="bg-gradient-to-br from-amber-50 to-orange-50 rounded-2xl p-5 border border-amber-200 relative overflow-hidden">
+        <div class="absolute top-0 right-0 w-24 h-24 -mr-8 -mt-8 rounded-full bg-amber-200/40"></div>
+        <div class="relative">
+          <div class="flex items-center justify-between">
+            <span class="chip bg-amber-500 text-white">M3</span>
+            <span class="text-2xl">🥇</span>
+          </div>
+          <h3 class="mt-3 font-bold text-amber-900">金卡会员</h3>
+          <p class="text-xs text-amber-700 mt-0.5">12 月 EP ≥ 30,000 或 年 GMV ≥ 500 万</p>
+          <div class="mt-4 grid grid-cols-2 gap-2 text-center">
+            <div class="p-2 rounded-lg bg-white">
+              <div class="text-[10px] text-amber-700">积分倍率</div>
+              <div class="text-lg font-bold text-amber-600">1.5×</div>
+            </div>
+            <div class="p-2 rounded-lg bg-white">
+              <div class="text-[10px] text-amber-700">服务费</div>
+              <div class="text-lg font-bold text-amber-600">9.0 折</div>
+            </div>
+          </div>
+          <div class="mt-3 text-xs text-amber-800 space-y-1">
+            <div>· 月度置顶位 8 个 · 广告 8 折</div>
+            <div>· 电子签章 50 次/月</div>
+            <div>· 7×12 群客服 · 月报+周报</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- M4 铂金卡 -->
+      <div class="bg-gradient-to-br from-slate-800 to-slate-900 rounded-2xl p-5 text-white relative overflow-hidden">
+        <div class="absolute top-0 right-0 w-32 h-32 -mr-8 -mt-8 rounded-full bg-warn/20 blur-xl"></div>
+        <div class="relative">
+          <div class="flex items-center justify-between">
+            <span class="chip bg-warn text-slate-900">M4</span>
+            <span class="text-2xl">💎</span>
+          </div>
+          <h3 class="mt-3 font-bold">铂金卡会员</h3>
+          <p class="text-xs text-white/70 mt-0.5">12 月 EP ≥ 100,000 或 年 GMV ≥ 2,000 万</p>
+          <div class="mt-4 grid grid-cols-2 gap-2 text-center">
+            <div class="p-2 rounded-lg bg-white/10 backdrop-blur">
+              <div class="text-[10px] text-white/70">积分倍率</div>
+              <div class="text-lg font-bold text-warn">2.0×</div>
+            </div>
+            <div class="p-2 rounded-lg bg-white/10 backdrop-blur">
+              <div class="text-[10px] text-white/70">服务费</div>
+              <div class="text-lg font-bold text-warn">8.5 折</div>
+            </div>
+          </div>
+          <div class="mt-3 text-xs text-white/80 space-y-1">
+            <div>· 不限置顶 · 广告 6 折</div>
+            <div>· 1v1 专属客服 + BD</div>
+            <div>· 月度首页推荐 · 3 席峰会</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 配置表 -->
+    <div class="bg-white rounded-xl border border-slate-200 mb-4">
+      <div class="px-4 py-3 border-b border-slate-100 flex justify-between items-center">
+        <h3 class="font-semibold text-slate-900">等级阈值与权益配置</h3>
+        <span class="text-xs text-slate-500">支持运营动态修改，T+1 生效</span>
+      </div>
+      <div class="scroll-x">
+      <table class="min-w-full text-sm">
+        <thead>
+          <tr class="text-left text-xs">
+            <th class="px-4 py-2.5">等级</th>
+            <th class="px-4 py-2.5">名称</th>
+            <th class="px-4 py-2.5">滚动 12 月 EP 阈值</th>
+            <th class="px-4 py-2.5">年 GMV 阈值</th>
+            <th class="px-4 py-2.5">积分倍率</th>
+            <th class="px-4 py-2.5">服务费折扣</th>
+            <th class="px-4 py-2.5">兑换折扣</th>
+            <th class="px-4 py-2.5">有效期</th>
+            <th class="px-4 py-2.5 text-right">操作</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr class="border-t border-slate-100">
+            <td class="px-4 py-2.5"><span class="chip bg-slate-200 text-slate-600">M1</span></td>
+            <td class="px-4 py-2.5 font-medium">普通会员</td>
+            <td class="px-4 py-2.5 text-slate-500">—（默认）</td>
+            <td class="px-4 py-2.5 text-slate-500">—</td>
+            <td class="px-4 py-2.5 font-medium">1.0×</td>
+            <td class="px-4 py-2.5 text-slate-500">无折扣</td>
+            <td class="px-4 py-2.5 text-slate-500">无折扣</td>
+            <td class="px-4 py-2.5">长期</td>
+            <td class="px-4 py-2.5 text-right"><button class="text-steel hover:underline" onclick="openModal('modal-tier')">编辑</button></td>
+          </tr>
+          <tr class="border-t border-slate-100">
+            <td class="px-4 py-2.5"><span class="chip bg-slate-400 text-white">M2</span></td>
+            <td class="px-4 py-2.5 font-medium">银卡会员</td>
+            <td class="px-4 py-2.5"><input class="w-24 border border-slate-200 rounded px-2 py-0.5 text-sm" value="5000"></td>
+            <td class="px-4 py-2.5"><input class="w-28 border border-slate-200 rounded px-2 py-0.5 text-sm" value="1,000,000"> 元</td>
+            <td class="px-4 py-2.5"><input class="w-16 border border-slate-200 rounded px-2 py-0.5 text-sm" value="1.2"></td>
+            <td class="px-4 py-2.5"><input class="w-16 border border-slate-200 rounded px-2 py-0.5 text-sm" value="0.95"></td>
+            <td class="px-4 py-2.5"><input class="w-16 border border-slate-200 rounded px-2 py-0.5 text-sm" value="0.95"></td>
+            <td class="px-4 py-2.5">12 个月</td>
+            <td class="px-4 py-2.5 text-right"><button class="text-steel hover:underline" onclick="openModal('modal-tier')">编辑</button></td>
+          </tr>
+          <tr class="border-t border-slate-100 bg-amber-50/40">
+            <td class="px-4 py-2.5"><span class="chip bg-amber-500 text-white">M3</span></td>
+            <td class="px-4 py-2.5 font-medium">金卡会员</td>
+            <td class="px-4 py-2.5"><input class="w-24 border border-slate-200 rounded px-2 py-0.5 text-sm" value="30000"></td>
+            <td class="px-4 py-2.5"><input class="w-28 border border-slate-200 rounded px-2 py-0.5 text-sm" value="5,000,000"> 元</td>
+            <td class="px-4 py-2.5"><input class="w-16 border border-slate-200 rounded px-2 py-0.5 text-sm" value="1.5"></td>
+            <td class="px-4 py-2.5"><input class="w-16 border border-slate-200 rounded px-2 py-0.5 text-sm" value="0.90"></td>
+            <td class="px-4 py-2.5"><input class="w-16 border border-slate-200 rounded px-2 py-0.5 text-sm" value="0.90"></td>
+            <td class="px-4 py-2.5">12 个月</td>
+            <td class="px-4 py-2.5 text-right"><button class="text-steel hover:underline" onclick="openModal('modal-tier')">编辑</button></td>
+          </tr>
+          <tr class="border-t border-slate-100 bg-slate-900/5">
+            <td class="px-4 py-2.5"><span class="chip bg-slate-900 text-warn">M4</span></td>
+            <td class="px-4 py-2.5 font-medium">铂金卡会员</td>
+            <td class="px-4 py-2.5"><input class="w-24 border border-slate-200 rounded px-2 py-0.5 text-sm" value="100000"></td>
+            <td class="px-4 py-2.5"><input class="w-28 border border-slate-200 rounded px-2 py-0.5 text-sm" value="20,000,000"> 元</td>
+            <td class="px-4 py-2.5"><input class="w-16 border border-slate-200 rounded px-2 py-0.5 text-sm" value="2.0"></td>
+            <td class="px-4 py-2.5"><input class="w-16 border border-slate-200 rounded px-2 py-0.5 text-sm" value="0.85"></td>
+            <td class="px-4 py-2.5"><input class="w-16 border border-slate-200 rounded px-2 py-0.5 text-sm" value="0.85"></td>
+            <td class="px-4 py-2.5">12 个月</td>
+            <td class="px-4 py-2.5 text-right"><button class="text-steel hover:underline" onclick="openModal('modal-tier')">编辑</button></td>
+          </tr>
+        </tbody>
+      </table>
+      </div>
+    </div>
+
+    <!-- 升降级规则 + 会员分布 -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+
+      <!-- 升降级规则 -->
+      <div class="bg-white rounded-xl p-5 border border-slate-200">
+        <h3 class="font-semibold text-slate-900 mb-3">升降级规则</h3>
+        <div class="space-y-3 text-sm">
+          <div class="flex gap-3">
+            <div class="w-8 h-8 rounded-full bg-ok/10 text-ok flex items-center justify-center shrink-0 font-medium">↑</div>
+            <div>
+              <div class="font-medium text-slate-900">升级（T+1 自动）</div>
+              <p class="text-xs text-slate-500 mt-0.5">每日 0 点重算滚动 12 月累计 EP / 年 GMV，任一首次达标 → 次日 0 点升级，三连通知（站内信+短信+邮件）</p>
+            </div>
+          </div>
+          <div class="flex gap-3">
+            <div class="w-8 h-8 rounded-full bg-steel/10 text-steel flex items-center justify-center shrink-0 font-medium">★</div>
+            <div>
+              <div class="font-medium text-slate-900">新企业直升通道</div>
+              <p class="text-xs text-slate-500 mt-0.5">新认证企业 30 天内完成首单 → 直升银卡 M2（试用 90 天，期满按常规口径评估）</p>
+            </div>
+          </div>
+          <div class="flex gap-3">
+            <div class="w-8 h-8 rounded-full bg-warn/10 text-warn flex items-center justify-center shrink-0 font-medium">⚠</div>
+            <div>
+              <div class="font-medium text-slate-900">保级倒计时（到期前 60 天）</div>
+              <p class="text-xs text-slate-500 mt-0.5">展示距保级缺口（EP / GMV），每周一次提醒；提供运营推荐任务助力保级</p>
+            </div>
+          </div>
+          <div class="flex gap-3">
+            <div class="w-8 h-8 rounded-full bg-danger/10 text-danger flex items-center justify-center shrink-0 font-medium">↓</div>
+            <div>
+              <div class="font-medium text-slate-900">降级（到期日触发）</div>
+              <p class="text-xs text-slate-500 mt-0.5">EP 与 GMV 两个指标均不达标 → 降一级（不一次降两级）；被降级 30 天内任一指标回升可恢复</p>
+            </div>
+          </div>
+          <div class="flex gap-3">
+            <div class="w-8 h-8 rounded-full bg-slate-200 text-slate-700 flex items-center justify-center shrink-0 font-medium">!</div>
+            <div>
+              <div class="font-medium text-slate-900">强制降级（风控）</div>
+              <p class="text-xs text-slate-500 mt-0.5">被风控冻结 &gt; 30 天 或 一年违规 ≥ 3 次：强制降至 M1，90 天内不能普通路径恢复</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 会员分布图 -->
+      <div class="bg-white rounded-xl p-5 border border-slate-200">
+        <div class="flex justify-between items-center mb-2">
+          <h3 class="font-semibold text-slate-900">企业会员分布</h3>
+          <span class="text-xs text-slate-500">总企业 1,284 家</span>
+        </div>
+        <div id="chart-tiers" style="height:280px"></div>
+      </div>
+
+    </div>
+  </section>
+
+</main>
+</div>
+
+<!-- ========== 规则编辑弹窗 ========== -->
+<div id="modal-rule" class="fixed inset-0 z-40 hidden flex items-center justify-center">
+  <div class="absolute inset-0 modal-mask" onclick="closeModal('modal-rule')"></div>
+  <div class="relative bg-white rounded-2xl w-[92%] max-w-2xl max-h-[90vh] overflow-y-auto shadow-2xl">
+    <div class="px-5 py-4 border-b border-slate-100 flex justify-between items-center sticky top-0 bg-white z-10">
+      <h3 class="font-bold text-slate-900">编辑积分动作 <span id="modal-code" class="text-xs text-slate-400 ml-2"></span></h3>
+      <button onclick="closeModal('modal-rule')" class="p-1 hover:bg-slate-100 rounded">
+        <svg class="w-5 h-5 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+      </button>
+    </div>
+    <div class="p-5 grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+      <div><label class="text-xs text-slate-500">动作编码</label><input id="m-code" class="mt-1 w-full border border-slate-300 rounded-lg px-3 py-2"></div>
+      <div><label class="text-xs text-slate-500">动作名称</label><input id="m-name" class="mt-1 w-full border border-slate-300 rounded-lg px-3 py-2"></div>
+      <div><label class="text-xs text-slate-500">类目</label><select class="mt-1 w-full border border-slate-300 rounded-lg px-3 py-2 bg-white"><option>拉新</option><option>认证</option><option>活跃</option><option>UGC</option><option>交易</option><option>物流</option><option>企业</option><option>营销</option><option>反馈</option></select></div>
+      <div><label class="text-xs text-slate-500">触发端</label><select class="mt-1 w-full border border-slate-300 rounded-lg px-3 py-2 bg-white"><option>双端 ALL</option><option>小程序 MP</option><option>网页 Web</option></select></div>
+      <div><label class="text-xs text-slate-500">个人积分 PP</label><input type="number" class="mt-1 w-full border border-slate-300 rounded-lg px-3 py-2" value="0"></div>
+      <div><label class="text-xs text-slate-500">企业积分 EP</label><input type="number" class="mt-1 w-full border border-slate-300 rounded-lg px-3 py-2" value="0"></div>
+      <div><label class="text-xs text-slate-500">归属策略</label><select class="mt-1 w-full border border-slate-300 rounded-lg px-3 py-2 bg-white"><option>个人</option><option>企业</option><option>双发</option></select></div>
+      <div><label class="text-xs text-slate-500">目标</label><select class="mt-1 w-full border border-slate-300 rounded-lg px-3 py-2 bg-white"><option>A 拉新</option><option>R 活跃</option><option>C 转化</option></select></div>
+      <div><label class="text-xs text-slate-500">单日上限</label><input class="mt-1 w-full border border-slate-300 rounded-lg px-3 py-2" placeholder="留空=不限"></div>
+      <div><label class="text-xs text-slate-500">终身上限</label><input class="mt-1 w-full border border-slate-300 rounded-lg px-3 py-2" placeholder="留空=不限"></div>
+      <div class="md:col-span-2"><label class="text-xs text-slate-500">触发条件描述</label><textarea class="mt-1 w-full border border-slate-300 rounded-lg px-3 py-2" rows="3" placeholder="精确描述业务上判定积分发放的条件"></textarea></div>
+      <div class="md:col-span-2 flex items-center gap-2">
+        <input type="checkbox" id="m-enable" checked class="w-4 h-4">
+        <label for="m-enable" class="text-sm text-slate-700">启用此规则</label>
+      </div>
+    </div>
+    <div class="px-5 py-4 border-t border-slate-100 flex justify-end gap-2 sticky bottom-0 bg-white">
+      <button onclick="closeModal('modal-rule')" class="text-sm px-4 py-2 rounded-lg border border-slate-300">取消</button>
+      <button onclick="saveRule()" class="text-sm px-4 py-2 rounded-lg bg-steel text-white">保存</button>
+    </div>
+  </div>
+</div>
+
+<!-- ========== 等级编辑弹窗 ========== -->
+<div id="modal-tier" class="fixed inset-0 z-40 hidden flex items-center justify-center">
+  <div class="absolute inset-0 modal-mask" onclick="closeModal('modal-tier')"></div>
+  <div class="relative bg-white rounded-2xl w-[92%] max-w-lg shadow-2xl">
+    <div class="px-5 py-4 border-b border-slate-100 flex justify-between items-center">
+      <h3 class="font-bold text-slate-900">编辑会员等级 <span class="text-xs text-slate-400 ml-2">M3 金卡会员</span></h3>
+      <button onclick="closeModal('modal-tier')" class="p-1 hover:bg-slate-100 rounded">
+        <svg class="w-5 h-5 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+      </button>
+    </div>
+    <div class="p-5 grid grid-cols-2 gap-4 text-sm">
+      <div><label class="text-xs text-slate-500">等级编码</label><input class="mt-1 w-full border border-slate-300 rounded-lg px-3 py-2 bg-slate-50" value="M3" disabled></div>
+      <div><label class="text-xs text-slate-500">等级名称</label><input class="mt-1 w-full border border-slate-300 rounded-lg px-3 py-2" value="金卡会员"></div>
+      <div><label class="text-xs text-slate-500">滚动 12 月 EP 阈值</label><input type="number" class="mt-1 w-full border border-slate-300 rounded-lg px-3 py-2" value="30000"></div>
+      <div><label class="text-xs text-slate-500">年 GMV 阈值（元）</label><input type="number" class="mt-1 w-full border border-slate-300 rounded-lg px-3 py-2" value="5000000"></div>
+      <div><label class="text-xs text-slate-500">积分倍率</label><input type="number" step="0.1" class="mt-1 w-full border border-slate-300 rounded-lg px-3 py-2" value="1.5"></div>
+      <div><label class="text-xs text-slate-500">服务费折扣（0~1）</label><input type="number" step="0.01" class="mt-1 w-full border border-slate-300 rounded-lg px-3 py-2" value="0.90"></div>
+      <div><label class="text-xs text-slate-500">兑换商城折扣</label><input type="number" step="0.01" class="mt-1 w-full border border-slate-300 rounded-lg px-3 py-2" value="0.90"></div>
+      <div><label class="text-xs text-slate-500">有效期（月）</label><input type="number" class="mt-1 w-full border border-slate-300 rounded-lg px-3 py-2" value="12"></div>
+      <div class="col-span-2"><label class="text-xs text-slate-500">软权益清单（一行一条）</label>
+        <textarea class="mt-1 w-full border border-slate-300 rounded-lg px-3 py-2" rows="4">月度免费置顶位 8 个
+广告位采购 8 折
+行业研报订阅（月报+周报）
+电子签章 50 次/月
+7×12 群专属客服
+季度首页推荐 1 次
+年度峰会席位 1 席</textarea>
+      </div>
+      <div class="col-span-2 p-3 rounded-lg bg-warn/10 text-xs text-warn">
+        ⚠ 修改等级配置将于次日 0 点生效；当前等级企业不立即变更，到期评估时按新规则执行。
+      </div>
+    </div>
+    <div class="px-5 py-4 border-t border-slate-100 flex justify-end gap-2">
+      <button onclick="closeModal('modal-tier')" class="text-sm px-4 py-2 rounded-lg border border-slate-300">取消</button>
+      <button onclick="closeModal('modal-tier');saveRule()" class="text-sm px-4 py-2 rounded-lg bg-steel text-white">保存</button>
+    </div>
+  </div>
+</div>
+
+<!-- ========== 流水详情抽屉 ========== -->
+<div id="drawer-record" class="fixed inset-0 z-40 hidden">
+  <div class="absolute inset-0 modal-mask" onclick="closeModal('drawer-record')"></div>
+  <div class="absolute right-0 top-0 h-full w-full sm:w-[480px] bg-white shadow-2xl overflow-y-auto">
+    <div class="px-5 py-4 border-b border-slate-100 flex justify-between items-center">
+      <h3 class="font-bold text-slate-900">流水详情</h3>
+      <button onclick="closeModal('drawer-record')" class="p-1 hover:bg-slate-100 rounded">
+        <svg class="w-5 h-5 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+      </button>
+    </div>
+    <div class="p-5 space-y-3 text-sm">
+      <div class="flex justify-between border-b pb-2"><span class="text-slate-500">流水号</span><span class="font-mono">PR202605221038</span></div>
+      <div class="flex justify-between border-b pb-2"><span class="text-slate-500">动作</span><span>PT_AC_01 员工分享小程序新用户注册</span></div>
+      <div class="flex justify-between border-b pb-2"><span class="text-slate-500">受益账户</span><span>张工 / 13800000111</span></div>
+      <div class="flex justify-between border-b pb-2"><span class="text-slate-500">来源用户</span><span>新注册 138****6789</span></div>
+      <div class="flex justify-between border-b pb-2"><span class="text-slate-500">分发数值</span><span class="text-ok font-medium">+30 PP</span></div>
+      <div class="flex justify-between border-b pb-2"><span class="text-slate-500">业务单号</span><span class="font-mono">INV-A-001234</span></div>
+      <div class="flex justify-between border-b pb-2"><span class="text-slate-500">状态</span><span class="chip bg-ok/10 text-ok">成功</span></div>
+      <div class="flex justify-between border-b pb-2"><span class="text-slate-500">设备指纹</span><span class="font-mono text-xs">d3f8a72e...</span></div>
+      <div class="flex justify-between"><span class="text-slate-500">时间</span><span>2026-05-22 10:38:21</span></div>
+      <div class="pt-4 flex gap-2">
+        <button class="flex-1 text-sm py-2 rounded-lg border border-slate-300">查看用户</button>
+        <button class="flex-1 text-sm py-2 rounded-lg border border-danger text-danger">回收积分</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Toast -->
+<div id="toast" class="fixed top-4 right-4 z-50 hidden">
+  <div class="bg-slate-900 text-white text-sm px-4 py-2 rounded-lg shadow-lg flex items-center gap-2">
+    <svg class="w-4 h-4 text-ok" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/></svg>
+    <span id="toast-msg">已保存</span>
+  </div>
+</div>
+
+<script>
+/* ===================== Mock 数据 ===================== */
+const RULES = [
+  ['PT_AC_01','员工分享小程序新用户注册','ALL',30,10,'10/日 · 200终身','双发','A'],
+  ['PT_AC_02','被邀人完成实名','ALL',50,20,'10/日','双发','A'],
+  ['PT_AC_03','被邀企业完成入驻认证','ALL',500,300,'50/年','双发','A+C'],
+  ['PT_AC_04','被邀企业完成首单','ALL',1000,500,'50/年','双发','A+C'],
+  ['PT_AC_05','邀请同事加入企业','ALL',20,30,'100/企业','双发','A'],
+  ['PT_AC_06','新用户首次登录','ALL',50,0,'终身1次','个人','A'],
+  ['PT_AC_07','7日内完成新手任务','ALL',100,0,'终身1次','个人','A+R'],
+  ['PT_AC_08','首次绑定企业','ALL',30,20,'终身1次','双发','A'],
+  ['PT_AC_09','分享外部并被打开','ALL',2,1,'5/日','双发','A+R'],
+  ['PT_AC_10','推荐钢厂/仓库/物流入驻','Web',200,500,'50/年','双发','A+C'],
+  ['PT_ON_03','个人实名认证','ALL',50,0,'终身1次','个人','A+C'],
+  ['PT_ON_07','企业认证通过','Web',0,300,'1/企业','企业','A+C'],
+  ['PT_ON_10','绑定企业银行账户','Web',0,100,'1次','企业','C'],
+  ['PT_ON_12','绑定 ERP/WMS 接口','Web',0,500,'1/企业','企业','R+C'],
+  ['PT_RE_01','每日签到','ALL',2,0,'1/日','个人','R'],
+  ['PT_RE_02','连续签到 7 天','ALL',10,0,'1/周','个人','R'],
+  ['PT_RE_04','浏览行情页每日首次','ALL',1,0,'1/日','个人','R'],
+  ['PT_RE_09','订阅行情推送','ALL',20,0,'1/组合','个人','R'],
+  ['PT_UG_01','发布求购单','ALL',15,10,'5/日','双发','R+C'],
+  ['PT_UG_02','发布资源/挂牌价','ALL',15,15,'10/日','双发','R+C'],
+  ['PT_UG_06','资源曝光达标','ALL',20,20,'5/资源','双发','R'],
+  ['PT_TR_01','发起询价','ALL',5,5,'10/日','双发','C'],
+  ['PT_TR_03','生成线上订单','ALL',20,50,'50/日','双发','C'],
+  ['PT_TR_04','企业首单完成','ALL',100,1000,'1/企业','双发','A+C'],
+  ['PT_TR_05','订单结算（含按金额比例）','ALL','10+0.5‰','20+1‰','单笔EP≤500','双发','C'],
+  ['PT_TR_07','复购','ALL',30,50,'不限','双发','C'],
+  ['PT_LG_01','选择平台物流','ALL',5,30,'不限','双发','C'],
+  ['PT_EN_01','企业月活员工达标','Web',0,200,'1/月','企业','R'],
+  ['PT_EN_04','企业 SVIP 升级','Web',0,1000,'1/级','企业','C'],
+  ['PT_MK_06','拼团/集采成功','ALL',20,50,'不限','双发','A+C'],
+];
+
+const RECORDS = [
+  ['PR202605221038','张工 (PP)','PT_AC_01 员工分享','+', '30', 'INV-A-001234', '成功', '2026-05-22 10:38:21'],
+  ['PR202605221037','华东建材 (EP)','PT_TR_04 企业首单','+','1000','ORD-202605-0152','成功','2026-05-22 10:32:08'],
+  ['PR202605221036','李采购 (PP)','PT_RE_01 每日签到','+','2','SIGN-20260522','成功','2026-05-22 09:21:11'],
+  ['PR202605221035','某钢贸 (EP)','PT_ON_07 企业认证','+','300','CERT-20260522-08','成功','2026-05-22 08:55:42'],
+  ['PR202605221034','王经理 (PP)','PT_MK_03 培训完成','+','30','TRN-002','成功','2026-05-22 08:10:33'],
+  ['PR202605221033','刘工 (PP)','商城兑换 - 京东卡','-','5000','ORD-MALL-1108','成功','2026-05-21 23:11:45'],
+  ['PR202605221032','九鼎钢铁 (EP)','PT_AC_03 被邀企业认证','+','300','INV-B-998','已冻结','2026-05-21 18:55:11'],
+  ['PR202605221031','陈采购 (PP)','PT_AC_01 员工分享','+','30','INV-A-001230','已回收','2026-05-21 16:21:08'],
+];
+
+const RISKS = [
+  ['138****1234','AF_04 拉新链路真实性','高','1280','待处置','2026-05-22 10:01'],
+  ['某虚拟公司 (EP)','AF_06 订单退款回收','中','500','处置中','2026-05-22 09:33'],
+  ['139****5678','AF_08 短时高频领分','高','3200','已冻结','2026-05-22 08:11'],
+  ['185****0099','AF_03 行为时间间隔不足','低','86','已驳回','2026-05-21 22:45'],
+  ['某皮包公司 (EP)','AF_05 邀请上限超标','中','1500','已冻结','2026-05-21 19:21'],
+  ['136****8888','AF_01 设备指纹重复','高','2400','待处置','2026-05-21 14:33'],
+];
+
+const MALL_ITEMS = [
+  {name:'中石化加油卡 100 元', price:8000, type:'虚拟权益', stock:120},
+  {name:'京东 E 卡 50 元', price:5000, type:'虚拟权益', stock:680},
+  {name:'保温杯（钢贸定制）', price:1500, type:'实物礼品', stock:230},
+  {name:'Mysteel 月报解锁', price:300, type:'虚拟权益', stock:9999},
+  {name:'服务费抵扣券 100 元', price:100000, type:'服务费抵扣', stock:50},
+  {name:'首页 Banner 7 天', price:80000, type:'资源位', stock:8},
+  {name:'电子签章 100 次包', price:30000, type:'虚拟权益', stock:30},
+  {name:'安全帽 1 顶', price:2000, type:'实物礼品', stock:180},
+];
+
+/* ===================== 工具：渲染表格 ===================== */
+function chipForOwner(v){
+  const map={'个人':'bg-ok/10 text-ok','企业':'bg-warn/10 text-warn','双发':'bg-steel/10 text-steel'};
+  return `<span class="chip ${map[v]||'bg-slate-100 text-slate-600'}">${v}</span>`;
+}
+function chipForGoal(v){
+  if(v.includes('A')&&v.includes('C')) return `<span class="chip bg-steel/10 text-steel">${v}</span>`;
+  if(v.includes('A')) return `<span class="chip bg-warn/10 text-warn">${v}</span>`;
+  if(v.includes('R')) return `<span class="chip bg-ok/10 text-ok">${v}</span>`;
+  return `<span class="chip bg-slate-200 text-slate-700">${v}</span>`;
+}
+function statusBadge(on){
+  return on
+    ? `<span class="chip bg-ok/10 text-ok"><span class="w-1.5 h-1.5 rounded-full bg-ok mr-1"></span>启用</span>`
+    : `<span class="chip bg-slate-200 text-slate-600"><span class="w-1.5 h-1.5 rounded-full bg-slate-400 mr-1"></span>停用</span>`;
+}
+
+function renderRules(){
+  const cat = document.getElementById('f-cat').value;
+  const owner = document.getElementById('f-owner').value;
+  const goal = document.getElementById('f-goal').value;
+  const status = document.getElementById('f-status').value;
+  const kw = document.getElementById('f-kw').value.toLowerCase();
+
+  const catMap = {'拉新 (AC)':'AC','认证 (ON)':'ON','活跃 (RE)':'RE','UGC (UG)':'UG','交易 (TR)':'TR','物流 (LG)':'LG','企业 (EN)':'EN','营销 (MK)':'MK','反馈 (FB)':'FB'};
+
+  const data = RULES.filter((r,i)=>{
+    if(cat && !r[0].includes(catMap[cat])) return false;
+    if(owner && r[6]!==owner) return false;
+    if(goal && !r[7].includes(goal.charAt(0))) return false;
+    if(kw && !(r[0].toLowerCase().includes(kw)||r[1].toLowerCase().includes(kw))) return false;
+    if(status==='停用' && i%9!==7) return false;
+    if(status==='启用' && i%9===7) return false;
+    return true;
+  });
+
+  const html = data.map((r,i)=>{
+    const on = i%9!==7;
+    return `<tr class="border-t border-slate-100 hover:bg-slate-50">
+      <td class="px-3 py-2.5 font-mono text-xs text-slate-700">${r[0]}</td>
+      <td class="px-3 py-2.5 text-slate-900">${r[1]}</td>
+      <td class="px-3 py-2.5"><span class="chip bg-slate-100 text-slate-600">${r[2]}</span></td>
+      <td class="px-3 py-2.5 text-ok font-medium">${r[3]||'-'}</td>
+      <td class="px-3 py-2.5 text-warn font-medium">${r[4]||'-'}</td>
+      <td class="px-3 py-2.5 text-xs text-slate-500">${r[5]}</td>
+      <td class="px-3 py-2.5">${chipForOwner(r[6])}</td>
+      <td class="px-3 py-2.5">${chipForGoal(r[7])}</td>
+      <td class="px-3 py-2.5">${statusBadge(on)}</td>
+      <td class="px-3 py-2.5 text-right whitespace-nowrap">
+        <button class="text-steel hover:underline mr-2" onclick="openModal('modal-rule','${r[0]}','${r[1].replace(/'/g,"")}')">编辑</button>
+        <button class="text-slate-500 hover:underline mr-2">复制</button>
+        <button class="text-danger hover:underline">${on?'停用':'启用'}</button>
+      </td>
+    </tr>`;
+  }).join('');
+  document.getElementById('tbody-rules').innerHTML = html || `<tr><td colspan="10" class="px-3 py-8 text-center text-slate-400">无匹配规则</td></tr>`;
+  document.getElementById('rules-total').textContent = data.length;
+}
+
+function resetFilter(){
+  ['f-cat','f-owner','f-goal','f-status'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('f-kw').value='';
+  renderRules();
+}
+
+function renderRecords(){
+  document.getElementById('tbody-records').innerHTML = RECORDS.map(r=>{
+    const dirCls = r[3]==='+'?'text-ok':'text-danger';
+    const stCls = r[6]==='成功' ? 'bg-ok/10 text-ok' : r[6]==='已冻结'?'bg-warn/10 text-warn':'bg-slate-200 text-slate-600';
+    return `<tr class="border-t border-slate-100 hover:bg-slate-50">
+      <td class="px-3 py-2.5 font-mono text-xs">${r[0]}</td>
+      <td class="px-3 py-2.5">${r[1]}</td>
+      <td class="px-3 py-2.5 text-slate-900">${r[2]}</td>
+      <td class="px-3 py-2.5 font-bold ${dirCls}">${r[3]}</td>
+      <td class="px-3 py-2.5 font-medium">${r[4]}</td>
+      <td class="px-3 py-2.5 font-mono text-xs text-slate-500">${r[5]}</td>
+      <td class="px-3 py-2.5"><span class="chip ${stCls}">${r[6]}</span></td>
+      <td class="px-3 py-2.5 text-xs text-slate-500">${r[7]}</td>
+      <td class="px-3 py-2.5 text-right"><button class="text-steel hover:underline" onclick="openModal('drawer-record')">详情</button></td>
+    </tr>`;
+  }).join('');
+}
+
+function renderRisk(){
+  document.getElementById('tbody-risk').innerHTML = RISKS.map(r=>{
+    const lvlMap = {'高':'bg-danger/10 text-danger','中':'bg-warn/10 text-warn','低':'bg-slate-100 text-slate-600'};
+    const stMap = {'待处置':'bg-warn/10 text-warn','处置中':'bg-steel/10 text-steel','已冻结':'bg-danger/10 text-danger','已驳回':'bg-slate-200 text-slate-600'};
+    return `<tr class="border-t border-slate-100 hover:bg-slate-50">
+      <td class="px-3 py-2.5">${r[0]}</td>
+      <td class="px-3 py-2.5"><code class="text-xs">${r[1]}</code></td>
+      <td class="px-3 py-2.5"><span class="chip ${lvlMap[r[2]]}">${r[2]}</span></td>
+      <td class="px-3 py-2.5 font-medium text-danger">${r[3]}</td>
+      <td class="px-3 py-2.5"><span class="chip ${stMap[r[4]]}">${r[4]}</span></td>
+      <td class="px-3 py-2.5 text-xs text-slate-500">${r[5]}</td>
+      <td class="px-3 py-2.5 text-right whitespace-nowrap">
+        <button class="text-steel hover:underline mr-2">查看</button>
+        <button class="text-danger hover:underline mr-2">冻结</button>
+        <button class="text-slate-500 hover:underline">回收</button>
+      </td>
+    </tr>`;
+  }).join('');
+}
+
+function renderMall(){
+  document.getElementById('mall-grid').innerHTML = MALL_ITEMS.map(it=>{
+    const typeMap = {'虚拟权益':'bg-steel/10 text-steel','实物礼品':'bg-warn/10 text-warn','服务费抵扣':'bg-ok/10 text-ok','资源位':'bg-danger/10 text-danger'};
+    return `<div class="bg-white rounded-xl p-4 border border-slate-200 hover:shadow-md transition">
+      <div class="aspect-square rounded-lg bg-gradient-to-br from-slate-100 to-slate-200 flex items-center justify-center mb-3">
+        <svg class="w-12 h-12 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/></svg>
+      </div>
+      <div class="flex justify-between items-start gap-1">
+        <h4 class="font-medium text-slate-900 text-sm">${it.name}</h4>
+        <span class="chip ${typeMap[it.type]} shrink-0">${it.type}</span>
+      </div>
+      <div class="mt-2 flex items-baseline justify-between">
+        <span class="text-steel font-bold">${it.price.toLocaleString()} <span class="text-xs font-normal">积分</span></span>
+        <span class="text-xs text-slate-400">库存 ${it.stock}</span>
+      </div>
+      <div class="mt-3 flex gap-2">
+        <button class="flex-1 text-xs py-1.5 rounded border border-slate-300">编辑</button>
+        <button class="flex-1 text-xs py-1.5 rounded bg-steel text-white">上下架</button>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+/* ===================== Tab 切换 ===================== */
+function switchTab(name){
+  document.querySelectorAll('.sidebar-item').forEach(b=>b.classList.toggle('active', b.dataset.tab===name));
+  document.querySelectorAll('[data-tab-content]').forEach(s=>s.classList.toggle('hidden', s.dataset.tabContent!==name));
+  const labels = {dashboard:'数据看板',rules:'积分规则',records:'积分流水',risk:'风控异常',mall:'商城管理',levels:'企业会员等级'};
+  document.getElementById('crumb-current').textContent = labels[name];
+  if(name==='levels') initTierChart();
+  setTimeout(()=>Object.values(charts).forEach(c=>c&&c.resize()),50);
+}
+
+function toggleSidebar(){
+  document.getElementById('sidebar').classList.toggle('hidden');
+}
+
+/* ===================== 弹窗 ===================== */
+function openModal(id, code, name){
+  document.getElementById(id).classList.remove('hidden');
+  if(id==='modal-rule'){
+    document.getElementById('modal-code').textContent = code? `${code} · ${name}` : '新建';
+    if(code){ document.getElementById('m-code').value=code; document.getElementById('m-name').value=name; }
+    else { document.getElementById('m-code').value=''; document.getElementById('m-name').value=''; }
+  }
+  document.body.style.overflow='hidden';
+}
+function closeModal(id){
+  document.getElementById(id).classList.add('hidden');
+  document.body.style.overflow='';
+}
+function saveRule(){
+  closeModal('modal-rule');
+  const toast = document.getElementById('toast');
+  document.getElementById('toast-msg').textContent='规则已保存';
+  toast.classList.remove('hidden');
+  setTimeout(()=>toast.classList.add('hidden'),2000);
+}
+
+/* ===================== ECharts ===================== */
+const charts = {};
+function initCharts(){
+  // 趋势
+  charts.trend = echarts.init(document.getElementById('chart-trend'));
+  charts.trend.setOption({
+    tooltip:{trigger:'axis'},
+    legend:{data:['发放','消耗'],right:0,textStyle:{fontSize:11}},
+    grid:{left:40,right:10,top:30,bottom:30},
+    xAxis:{type:'category',data:['05-01','05-04','05-07','05-10','05-13','05-16','05-19','05-22'],axisLine:{lineStyle:{color:'#cbd5e1'}}},
+    yAxis:{type:'value',splitLine:{lineStyle:{color:'#f1f5f9'}}},
+    series:[
+      {name:'发放',type:'line',smooth:true,data:[42000,55000,61000,58000,72000,80000,86000,93000],itemStyle:{color:'#1E40AF'},areaStyle:{color:'rgba(30,64,175,.08)'}},
+      {name:'消耗',type:'line',smooth:true,data:[15000,22000,25000,31000,28000,40000,42000,48000],itemStyle:{color:'#F59E0B'},areaStyle:{color:'rgba(245,158,11,.08)'}}
+    ]
+  });
+
+  // Top10
+  charts.top10 = echarts.init(document.getElementById('chart-top10'));
+  charts.top10.setOption({
+    tooltip:{},
+    grid:{left:120,right:10,top:10,bottom:20},
+    xAxis:{type:'value',axisLine:{lineStyle:{color:'#cbd5e1'}},splitLine:{lineStyle:{color:'#f1f5f9'}}},
+    yAxis:{type:'category',data:['每日签到','分享拉新','发布资源','发起询价','浏览行情','订阅推送','发布求购','企业首单','复购订单','培训完成'].reverse(),axisLine:{lineStyle:{color:'#cbd5e1'}}},
+    series:[{type:'bar',data:[12,18,22,30,38,42,55,72,88,120].map(v=>({value:v,itemStyle:{color:'#1E40AF'}})),barWidth:14}]
+  });
+
+  // 饼
+  charts.pie = echarts.init(document.getElementById('chart-pie'));
+  charts.pie.setOption({
+    tooltip:{trigger:'item',formatter:'{b}: {c} ({d}%)'},
+    legend:{bottom:0,textStyle:{fontSize:11}},
+    series:[{type:'pie',radius:['40%','65%'],center:['50%','45%'],
+      data:[
+        {value:380,name:'交易类'},{value:260,name:'活跃类'},{value:180,name:'拉新类'},
+        {value:120,name:'UGC类'},{value:90,name:'认证类'},{value:70,name:'其他'}
+      ],
+      label:{formatter:'{b}\n{d}%',fontSize:10},
+      itemStyle:{borderRadius:4,borderColor:'#fff',borderWidth:2},
+      color:['#1E40AF','#10B981','#F59E0B','#EF4444','#6366F1','#94A3B8']
+    }]
+  });
+
+  // 等级分布（看板版）：仅展示企业 4 级会员分布
+  charts.levels = echarts.init(document.getElementById('chart-levels'));
+  charts.levels.setOption({
+    tooltip:{trigger:'axis',formatter:'{b}<br/>{c} 家企业'},
+    grid:{left:40,right:30,top:20,bottom:30},
+    xAxis:{type:'category',data:['M1 普通','M2 银卡','M3 金卡','M4 铂金'],axisLine:{lineStyle:{color:'#cbd5e1'}}},
+    yAxis:{type:'value',splitLine:{lineStyle:{color:'#f1f5f9'}}},
+    series:[{
+      type:'bar',barWidth:38,
+      data:[
+        {value:820,itemStyle:{color:'#94A3B8',borderRadius:[6,6,0,0]}},
+        {value:360,itemStyle:{color:'#64748B',borderRadius:[6,6,0,0]}},
+        {value:89,itemStyle:{color:'#F59E0B',borderRadius:[6,6,0,0]}},
+        {value:15,itemStyle:{color:'#1E293B',borderRadius:[6,6,0,0]}}
+      ],
+      label:{show:true,position:'top',formatter:'{c}',fontSize:11,color:'#475569'}
+    }]
+  });
+}
+
+/* 会员分布（会员等级 Tab 内的图） */
+function initTierChart(){
+  if(!document.getElementById('chart-tiers')) return;
+  if(charts.tiers) { charts.tiers.resize(); return; }
+  charts.tiers = echarts.init(document.getElementById('chart-tiers'));
+  charts.tiers.setOption({
+    tooltip:{trigger:'item',formatter:'{b}<br/>{c} 家 ({d}%)'},
+    legend:{bottom:0,textStyle:{fontSize:11}},
+    series:[{
+      type:'pie',radius:['42%','68%'],center:['50%','45%'],
+      data:[
+        {value:820,name:'M1 普通会员',itemStyle:{color:'#94A3B8'}},
+        {value:360,name:'M2 银卡会员',itemStyle:{color:'#64748B'}},
+        {value:89,name:'M3 金卡会员',itemStyle:{color:'#F59E0B'}},
+        {value:15,name:'M4 铂金卡会员',itemStyle:{color:'#1E293B'}}
+      ],
+      label:{formatter:'{b}\n{d}%',fontSize:10},
+      itemStyle:{borderRadius:6,borderColor:'#fff',borderWidth:2}
+    }]
+  });
+}
+
+window.addEventListener('resize',()=>Object.values(charts).forEach(c=>c&&c.resize()));
+
+/* ===================== 初始化 ===================== */
+renderRules();
+renderRecords();
+renderRisk();
+renderMall();
+initCharts();
+</script>
+</body>
+</html>
