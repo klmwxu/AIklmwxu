@@ -54,14 +54,11 @@
     <div class="bg-white rounded-2xl shadow-xl p-5">
       <div class="flex items-center gap-3">
         <div class="w-14 h-14 rounded-full bg-gradient-to-br from-steel to-blue-400 text-white flex items-center justify-center text-xl font-bold">张</div>
-        <div class="flex-1">
-          <div class="flex items-center gap-2">
-            <h2 class="font-bold text-slate-900">张工</h2>
-            <span class="chip bg-warn/10 text-warn">L3 钢师</span>
-          </div>
-          <div class="text-xs text-slate-500 mt-0.5">某钢贸有限公司 · 采购经理</div>
+        <div class="flex-1 min-w-0">
+          <h2 class="font-bold text-slate-900 truncate">张工</h2>
+          <div class="text-xs text-slate-500 mt-0.5 truncate">某钢贸有限公司 · 采购经理</div>
         </div>
-        <button class="text-slate-400">
+        <button class="text-slate-400 shrink-0">
           <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
         </button>
       </div>
@@ -70,6 +67,7 @@
         <div>
           <div class="text-xs text-slate-500">我的积分</div>
           <div class="text-3xl font-bold text-slate-900 mt-0.5">3,856</div>
+          <div class="text-xs text-slate-400 mt-0.5">个人积分仅用于兑换，不影响企业等级</div>
         </div>
         <div class="text-right">
           <div class="text-xs text-slate-500">本月获得</div>
@@ -77,16 +75,30 @@
         </div>
       </div>
 
-      <!-- 升级进度 -->
-      <div class="mt-4">
-        <div class="flex justify-between text-xs text-slate-500 mb-1">
-          <span>距 L4 钢王还差 <span class="text-steel font-medium">6,144</span></span>
-          <span>3,856 / 10,000</span>
+      <!-- 所属企业会员等级（个人无等级，展示企业归属） -->
+      <a href="enterprise.html" class="mt-4 block p-3 rounded-xl bg-gradient-to-r from-amber-50 to-orange-50 border border-amber-200">
+        <div class="flex items-center justify-between">
+          <div class="flex items-center gap-2">
+            <span class="text-xl">🥇</span>
+            <div>
+              <div class="text-xs text-amber-700">我所属企业</div>
+              <div class="text-sm font-bold text-amber-900">M3 金卡会员</div>
+            </div>
+          </div>
+          <div class="flex items-center gap-3 text-right">
+            <div>
+              <div class="text-[10px] text-amber-700">积分倍率</div>
+              <div class="text-sm font-bold text-amber-600">1.5×</div>
+            </div>
+            <div>
+              <div class="text-[10px] text-amber-700">兑换折扣</div>
+              <div class="text-sm font-bold text-amber-600">9.0 折</div>
+            </div>
+            <svg class="w-4 h-4 text-amber-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+          </div>
         </div>
-        <div class="h-2 rounded-full bg-slate-100 overflow-hidden">
-          <div class="h-full bg-gradient-to-r from-steel to-blue-400" style="width:38.56%"></div>
-        </div>
-      </div>
+        <div class="mt-2 text-[11px] text-amber-700/80">企业会员权益由管理员统一兑换；我的 EP 贡献已计入企业账户</div>
+      </a>
 
       <!-- 快捷入口 -->
       <div class="mt-5 grid grid-cols-4 gap-2 text-center">

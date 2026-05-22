@@ -97,7 +97,8 @@
     </button>
     <button class="sidebar-item w-full text-left px-4 py-2.5 flex items-center gap-2" data-tab="levels" onclick="switchTab('levels')">
       <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 3v18l7-5 7 5V3z"/></svg>
-      等级体系
+      会员等级
+      <span class="ml-auto text-[10px] bg-warn text-white rounded px-1.5 py-0.5">企业</span>
     </button>
 
     <div class="mt-6 px-4 text-xs uppercase text-slate-400">运营辅助</div>
@@ -370,39 +371,260 @@
     </div>
   </section>
 
-  <!-- ========== Tab 6: 等级体系 ========== -->
+  <!-- ========== Tab 6: 会员等级（仅企业） ========== -->
   <section data-tab-content="levels" class="hidden">
-    <h2 class="text-xl font-bold text-slate-900 mb-4">等级体系</h2>
+    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-4">
+      <div>
+        <h2 class="text-xl font-bold text-slate-900">企业会员等级</h2>
+        <p class="text-xs text-slate-500 mt-0.5">会员体系仅企业存在，个人无会员等级；通过积分倍率 + 折扣率撬动企业活跃</p>
+      </div>
+      <div class="flex items-center gap-2">
+        <button class="text-sm px-3 py-1.5 rounded-lg border border-slate-300 bg-white">手动授级</button>
+        <button class="text-sm px-3 py-1.5 rounded-lg bg-steel text-white">保存配置</button>
+      </div>
+    </div>
 
+    <!-- 4 张等级卡片 -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-3 mb-5">
+
+      <!-- M1 普通 -->
+      <div class="bg-white rounded-2xl p-5 border border-slate-200 relative overflow-hidden">
+        <div class="absolute top-0 right-0 w-24 h-24 -mr-8 -mt-8 rounded-full bg-slate-100"></div>
+        <div class="relative">
+          <div class="flex items-center justify-between">
+            <span class="chip bg-slate-200 text-slate-600">M1</span>
+            <span class="text-2xl">🪪</span>
+          </div>
+          <h3 class="mt-3 font-bold text-slate-900">普通会员</h3>
+          <p class="text-xs text-slate-500 mt-0.5">完成企业认证即获得</p>
+          <div class="mt-4 grid grid-cols-2 gap-2 text-center">
+            <div class="p-2 rounded-lg bg-slate-50">
+              <div class="text-[10px] text-slate-500">积分倍率</div>
+              <div class="text-lg font-bold text-slate-700">1.0×</div>
+            </div>
+            <div class="p-2 rounded-lg bg-slate-50">
+              <div class="text-[10px] text-slate-500">折扣率</div>
+              <div class="text-lg font-bold text-slate-700">无</div>
+            </div>
+          </div>
+          <div class="mt-3 text-xs text-slate-500 space-y-1">
+            <div>· 月度置顶位 1 个</div>
+            <div>· 电子签章 5 次/月</div>
+            <div>· 自助文档支持</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- M2 银卡 -->
+      <div class="bg-gradient-to-br from-slate-50 to-slate-100 rounded-2xl p-5 border border-slate-300 relative overflow-hidden">
+        <div class="absolute top-0 right-0 w-24 h-24 -mr-8 -mt-8 rounded-full bg-slate-300/30"></div>
+        <div class="relative">
+          <div class="flex items-center justify-between">
+            <span class="chip bg-slate-400 text-white">M2</span>
+            <span class="text-2xl">🥈</span>
+          </div>
+          <h3 class="mt-3 font-bold text-slate-900">银卡会员</h3>
+          <p class="text-xs text-slate-500 mt-0.5">12 月 EP ≥ 5,000 或 年 GMV ≥ 100 万</p>
+          <div class="mt-4 grid grid-cols-2 gap-2 text-center">
+            <div class="p-2 rounded-lg bg-white">
+              <div class="text-[10px] text-slate-500">积分倍率</div>
+              <div class="text-lg font-bold text-steel">1.2×</div>
+            </div>
+            <div class="p-2 rounded-lg bg-white">
+              <div class="text-[10px] text-slate-500">服务费</div>
+              <div class="text-lg font-bold text-ok">9.5 折</div>
+            </div>
+          </div>
+          <div class="mt-3 text-xs text-slate-500 space-y-1">
+            <div>· 月度置顶位 3 个</div>
+            <div>· 电子签章 20 次/月</div>
+            <div>· 5×8 群客服</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- M3 金卡 -->
+      <div class="bg-gradient-to-br from-amber-50 to-orange-50 rounded-2xl p-5 border border-amber-200 relative overflow-hidden">
+        <div class="absolute top-0 right-0 w-24 h-24 -mr-8 -mt-8 rounded-full bg-amber-200/40"></div>
+        <div class="relative">
+          <div class="flex items-center justify-between">
+            <span class="chip bg-amber-500 text-white">M3</span>
+            <span class="text-2xl">🥇</span>
+          </div>
+          <h3 class="mt-3 font-bold text-amber-900">金卡会员</h3>
+          <p class="text-xs text-amber-700 mt-0.5">12 月 EP ≥ 30,000 或 年 GMV ≥ 500 万</p>
+          <div class="mt-4 grid grid-cols-2 gap-2 text-center">
+            <div class="p-2 rounded-lg bg-white">
+              <div class="text-[10px] text-amber-700">积分倍率</div>
+              <div class="text-lg font-bold text-amber-600">1.5×</div>
+            </div>
+            <div class="p-2 rounded-lg bg-white">
+              <div class="text-[10px] text-amber-700">服务费</div>
+              <div class="text-lg font-bold text-amber-600">9.0 折</div>
+            </div>
+          </div>
+          <div class="mt-3 text-xs text-amber-800 space-y-1">
+            <div>· 月度置顶位 8 个 · 广告 8 折</div>
+            <div>· 电子签章 50 次/月</div>
+            <div>· 7×12 群客服 · 月报+周报</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- M4 铂金卡 -->
+      <div class="bg-gradient-to-br from-slate-800 to-slate-900 rounded-2xl p-5 text-white relative overflow-hidden">
+        <div class="absolute top-0 right-0 w-32 h-32 -mr-8 -mt-8 rounded-full bg-warn/20 blur-xl"></div>
+        <div class="relative">
+          <div class="flex items-center justify-between">
+            <span class="chip bg-warn text-slate-900">M4</span>
+            <span class="text-2xl">💎</span>
+          </div>
+          <h3 class="mt-3 font-bold">铂金卡会员</h3>
+          <p class="text-xs text-white/70 mt-0.5">12 月 EP ≥ 100,000 或 年 GMV ≥ 2,000 万</p>
+          <div class="mt-4 grid grid-cols-2 gap-2 text-center">
+            <div class="p-2 rounded-lg bg-white/10 backdrop-blur">
+              <div class="text-[10px] text-white/70">积分倍率</div>
+              <div class="text-lg font-bold text-warn">2.0×</div>
+            </div>
+            <div class="p-2 rounded-lg bg-white/10 backdrop-blur">
+              <div class="text-[10px] text-white/70">服务费</div>
+              <div class="text-lg font-bold text-warn">8.5 折</div>
+            </div>
+          </div>
+          <div class="mt-3 text-xs text-white/80 space-y-1">
+            <div>· 不限置顶 · 广告 6 折</div>
+            <div>· 1v1 专属客服 + BD</div>
+            <div>· 月度首页推荐 · 3 席峰会</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 配置表 -->
+    <div class="bg-white rounded-xl border border-slate-200 mb-4">
+      <div class="px-4 py-3 border-b border-slate-100 flex justify-between items-center">
+        <h3 class="font-semibold text-slate-900">等级阈值与权益配置</h3>
+        <span class="text-xs text-slate-500">支持运营动态修改，T+1 生效</span>
+      </div>
+      <div class="scroll-x">
+      <table class="min-w-full text-sm">
+        <thead>
+          <tr class="text-left text-xs">
+            <th class="px-4 py-2.5">等级</th>
+            <th class="px-4 py-2.5">名称</th>
+            <th class="px-4 py-2.5">滚动 12 月 EP 阈值</th>
+            <th class="px-4 py-2.5">年 GMV 阈值</th>
+            <th class="px-4 py-2.5">积分倍率</th>
+            <th class="px-4 py-2.5">服务费折扣</th>
+            <th class="px-4 py-2.5">兑换折扣</th>
+            <th class="px-4 py-2.5">有效期</th>
+            <th class="px-4 py-2.5 text-right">操作</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr class="border-t border-slate-100">
+            <td class="px-4 py-2.5"><span class="chip bg-slate-200 text-slate-600">M1</span></td>
+            <td class="px-4 py-2.5 font-medium">普通会员</td>
+            <td class="px-4 py-2.5 text-slate-500">—（默认）</td>
+            <td class="px-4 py-2.5 text-slate-500">—</td>
+            <td class="px-4 py-2.5 font-medium">1.0×</td>
+            <td class="px-4 py-2.5 text-slate-500">无折扣</td>
+            <td class="px-4 py-2.5 text-slate-500">无折扣</td>
+            <td class="px-4 py-2.5">长期</td>
+            <td class="px-4 py-2.5 text-right"><button class="text-steel hover:underline" onclick="openModal('modal-tier')">编辑</button></td>
+          </tr>
+          <tr class="border-t border-slate-100">
+            <td class="px-4 py-2.5"><span class="chip bg-slate-400 text-white">M2</span></td>
+            <td class="px-4 py-2.5 font-medium">银卡会员</td>
+            <td class="px-4 py-2.5"><input class="w-24 border border-slate-200 rounded px-2 py-0.5 text-sm" value="5000"></td>
+            <td class="px-4 py-2.5"><input class="w-28 border border-slate-200 rounded px-2 py-0.5 text-sm" value="1,000,000"> 元</td>
+            <td class="px-4 py-2.5"><input class="w-16 border border-slate-200 rounded px-2 py-0.5 text-sm" value="1.2"></td>
+            <td class="px-4 py-2.5"><input class="w-16 border border-slate-200 rounded px-2 py-0.5 text-sm" value="0.95"></td>
+            <td class="px-4 py-2.5"><input class="w-16 border border-slate-200 rounded px-2 py-0.5 text-sm" value="0.95"></td>
+            <td class="px-4 py-2.5">12 个月</td>
+            <td class="px-4 py-2.5 text-right"><button class="text-steel hover:underline" onclick="openModal('modal-tier')">编辑</button></td>
+          </tr>
+          <tr class="border-t border-slate-100 bg-amber-50/40">
+            <td class="px-4 py-2.5"><span class="chip bg-amber-500 text-white">M3</span></td>
+            <td class="px-4 py-2.5 font-medium">金卡会员</td>
+            <td class="px-4 py-2.5"><input class="w-24 border border-slate-200 rounded px-2 py-0.5 text-sm" value="30000"></td>
+            <td class="px-4 py-2.5"><input class="w-28 border border-slate-200 rounded px-2 py-0.5 text-sm" value="5,000,000"> 元</td>
+            <td class="px-4 py-2.5"><input class="w-16 border border-slate-200 rounded px-2 py-0.5 text-sm" value="1.5"></td>
+            <td class="px-4 py-2.5"><input class="w-16 border border-slate-200 rounded px-2 py-0.5 text-sm" value="0.90"></td>
+            <td class="px-4 py-2.5"><input class="w-16 border border-slate-200 rounded px-2 py-0.5 text-sm" value="0.90"></td>
+            <td class="px-4 py-2.5">12 个月</td>
+            <td class="px-4 py-2.5 text-right"><button class="text-steel hover:underline" onclick="openModal('modal-tier')">编辑</button></td>
+          </tr>
+          <tr class="border-t border-slate-100 bg-slate-900/5">
+            <td class="px-4 py-2.5"><span class="chip bg-slate-900 text-warn">M4</span></td>
+            <td class="px-4 py-2.5 font-medium">铂金卡会员</td>
+            <td class="px-4 py-2.5"><input class="w-24 border border-slate-200 rounded px-2 py-0.5 text-sm" value="100000"></td>
+            <td class="px-4 py-2.5"><input class="w-28 border border-slate-200 rounded px-2 py-0.5 text-sm" value="20,000,000"> 元</td>
+            <td class="px-4 py-2.5"><input class="w-16 border border-slate-200 rounded px-2 py-0.5 text-sm" value="2.0"></td>
+            <td class="px-4 py-2.5"><input class="w-16 border border-slate-200 rounded px-2 py-0.5 text-sm" value="0.85"></td>
+            <td class="px-4 py-2.5"><input class="w-16 border border-slate-200 rounded px-2 py-0.5 text-sm" value="0.85"></td>
+            <td class="px-4 py-2.5">12 个月</td>
+            <td class="px-4 py-2.5 text-right"><button class="text-steel hover:underline" onclick="openModal('modal-tier')">编辑</button></td>
+          </tr>
+        </tbody>
+      </table>
+      </div>
+    </div>
+
+    <!-- 升降级规则 + 会员分布 -->
     <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
-      <!-- 个人 -->
+
+      <!-- 升降级规则 -->
       <div class="bg-white rounded-xl p-5 border border-slate-200">
-        <h3 class="font-semibold text-slate-900 mb-3 flex items-center gap-2">
-          <span class="chip bg-ok/10 text-ok">个人 5 级</span>
-          <span class="text-xs text-slate-500">按累计获得 PP 计</span>
-        </h3>
-        <div class="space-y-2">
-          <div class="flex items-center justify-between p-3 rounded-lg bg-slate-50"><div><div class="text-sm font-medium">L1 钢友</div><div class="text-xs text-slate-500">基础功能</div></div><div class="text-xs text-slate-500">0 +</div></div>
-          <div class="flex items-center justify-between p-3 rounded-lg bg-slate-50"><div><div class="text-sm font-medium">L2 钢匠</div><div class="text-xs text-slate-500">行情订阅 +1 组合</div></div><div class="text-xs text-slate-500">500 +</div></div>
-          <div class="flex items-center justify-between p-3 rounded-lg bg-slate-50"><div><div class="text-sm font-medium">L3 钢师</div><div class="text-xs text-slate-500">报告免费 / 月度礼</div></div><div class="text-xs text-slate-500">2,000 +</div></div>
-          <div class="flex items-center justify-between p-3 rounded-lg bg-slate-50"><div><div class="text-sm font-medium">L4 钢王</div><div class="text-xs text-slate-500">1v1 行业顾问</div></div><div class="text-xs text-slate-500">10,000 +</div></div>
-          <div class="flex items-center justify-between p-3 rounded-lg bg-gradient-to-r from-steel/10 to-steel/5"><div><div class="text-sm font-medium text-steel">L5 钢神</div><div class="text-xs text-slate-500">年会邀请 · 专属勋章</div></div><div class="text-xs text-slate-500">50,000 +</div></div>
+        <h3 class="font-semibold text-slate-900 mb-3">升降级规则</h3>
+        <div class="space-y-3 text-sm">
+          <div class="flex gap-3">
+            <div class="w-8 h-8 rounded-full bg-ok/10 text-ok flex items-center justify-center shrink-0 font-medium">↑</div>
+            <div>
+              <div class="font-medium text-slate-900">升级（T+1 自动）</div>
+              <p class="text-xs text-slate-500 mt-0.5">每日 0 点重算滚动 12 月累计 EP / 年 GMV，任一首次达标 → 次日 0 点升级，三连通知（站内信+短信+邮件）</p>
+            </div>
+          </div>
+          <div class="flex gap-3">
+            <div class="w-8 h-8 rounded-full bg-steel/10 text-steel flex items-center justify-center shrink-0 font-medium">★</div>
+            <div>
+              <div class="font-medium text-slate-900">新企业直升通道</div>
+              <p class="text-xs text-slate-500 mt-0.5">新认证企业 30 天内完成首单 → 直升银卡 M2（试用 90 天，期满按常规口径评估）</p>
+            </div>
+          </div>
+          <div class="flex gap-3">
+            <div class="w-8 h-8 rounded-full bg-warn/10 text-warn flex items-center justify-center shrink-0 font-medium">⚠</div>
+            <div>
+              <div class="font-medium text-slate-900">保级倒计时（到期前 60 天）</div>
+              <p class="text-xs text-slate-500 mt-0.5">展示距保级缺口（EP / GMV），每周一次提醒；提供运营推荐任务助力保级</p>
+            </div>
+          </div>
+          <div class="flex gap-3">
+            <div class="w-8 h-8 rounded-full bg-danger/10 text-danger flex items-center justify-center shrink-0 font-medium">↓</div>
+            <div>
+              <div class="font-medium text-slate-900">降级（到期日触发）</div>
+              <p class="text-xs text-slate-500 mt-0.5">EP 与 GMV 两个指标均不达标 → 降一级（不一次降两级）；被降级 30 天内任一指标回升可恢复</p>
+            </div>
+          </div>
+          <div class="flex gap-3">
+            <div class="w-8 h-8 rounded-full bg-slate-200 text-slate-700 flex items-center justify-center shrink-0 font-medium">!</div>
+            <div>
+              <div class="font-medium text-slate-900">强制降级（风控）</div>
+              <p class="text-xs text-slate-500 mt-0.5">被风控冻结 &gt; 30 天 或 一年违规 ≥ 3 次：强制降至 M1，90 天内不能普通路径恢复</p>
+            </div>
+          </div>
         </div>
       </div>
-      <!-- 企业 -->
+
+      <!-- 会员分布图 -->
       <div class="bg-white rounded-xl p-5 border border-slate-200">
-        <h3 class="font-semibold text-slate-900 mb-3 flex items-center gap-2">
-          <span class="chip bg-warn/10 text-warn">企业 5 级</span>
-          <span class="text-xs text-slate-500">按累计获得 EP 计</span>
-        </h3>
-        <div class="space-y-2">
-          <div class="flex items-center justify-between p-3 rounded-lg bg-slate-50"><div><div class="text-sm font-medium">E1 入驻企业</div><div class="text-xs text-slate-500">基础企业页</div></div><div class="text-xs text-slate-500">0 +</div></div>
-          <div class="flex items-center justify-between p-3 rounded-lg bg-slate-50"><div><div class="text-sm font-medium">E2 认证企业</div><div class="text-xs text-slate-500">1 置顶资源 / 月</div></div><div class="text-xs text-slate-500">1,000 +</div></div>
-          <div class="flex items-center justify-between p-3 rounded-lg bg-slate-50"><div><div class="text-sm font-medium">E3 金牌企业</div><div class="text-xs text-slate-500">3 置顶 + 广告位 5 折</div></div><div class="text-xs text-slate-500">10,000 +</div></div>
-          <div class="flex items-center justify-between p-3 rounded-lg bg-slate-50"><div><div class="text-sm font-medium">E4 行业标杆</div><div class="text-xs text-slate-500">首页推荐 + 专属 BD</div></div><div class="text-xs text-slate-500">50,000 +</div></div>
-          <div class="flex items-center justify-between p-3 rounded-lg bg-gradient-to-r from-warn/10 to-warn/5"><div><div class="text-sm font-medium text-warn">E5 战略伙伴</div><div class="text-xs text-slate-500">阶梯减免 · 品牌联合</div></div><div class="text-xs text-slate-500">200,000 +</div></div>
+        <div class="flex justify-between items-center mb-2">
+          <h3 class="font-semibold text-slate-900">企业会员分布</h3>
+          <span class="text-xs text-slate-500">总企业 1,284 家</span>
         </div>
+        <div id="chart-tiers" style="height:280px"></div>
       </div>
+
     </div>
   </section>
 
@@ -439,6 +661,45 @@
     <div class="px-5 py-4 border-t border-slate-100 flex justify-end gap-2 sticky bottom-0 bg-white">
       <button onclick="closeModal('modal-rule')" class="text-sm px-4 py-2 rounded-lg border border-slate-300">取消</button>
       <button onclick="saveRule()" class="text-sm px-4 py-2 rounded-lg bg-steel text-white">保存</button>
+    </div>
+  </div>
+</div>
+
+<!-- ========== 等级编辑弹窗 ========== -->
+<div id="modal-tier" class="fixed inset-0 z-40 hidden flex items-center justify-center">
+  <div class="absolute inset-0 modal-mask" onclick="closeModal('modal-tier')"></div>
+  <div class="relative bg-white rounded-2xl w-[92%] max-w-lg shadow-2xl">
+    <div class="px-5 py-4 border-b border-slate-100 flex justify-between items-center">
+      <h3 class="font-bold text-slate-900">编辑会员等级 <span class="text-xs text-slate-400 ml-2">M3 金卡会员</span></h3>
+      <button onclick="closeModal('modal-tier')" class="p-1 hover:bg-slate-100 rounded">
+        <svg class="w-5 h-5 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+      </button>
+    </div>
+    <div class="p-5 grid grid-cols-2 gap-4 text-sm">
+      <div><label class="text-xs text-slate-500">等级编码</label><input class="mt-1 w-full border border-slate-300 rounded-lg px-3 py-2 bg-slate-50" value="M3" disabled></div>
+      <div><label class="text-xs text-slate-500">等级名称</label><input class="mt-1 w-full border border-slate-300 rounded-lg px-3 py-2" value="金卡会员"></div>
+      <div><label class="text-xs text-slate-500">滚动 12 月 EP 阈值</label><input type="number" class="mt-1 w-full border border-slate-300 rounded-lg px-3 py-2" value="30000"></div>
+      <div><label class="text-xs text-slate-500">年 GMV 阈值（元）</label><input type="number" class="mt-1 w-full border border-slate-300 rounded-lg px-3 py-2" value="5000000"></div>
+      <div><label class="text-xs text-slate-500">积分倍率</label><input type="number" step="0.1" class="mt-1 w-full border border-slate-300 rounded-lg px-3 py-2" value="1.5"></div>
+      <div><label class="text-xs text-slate-500">服务费折扣（0~1）</label><input type="number" step="0.01" class="mt-1 w-full border border-slate-300 rounded-lg px-3 py-2" value="0.90"></div>
+      <div><label class="text-xs text-slate-500">兑换商城折扣</label><input type="number" step="0.01" class="mt-1 w-full border border-slate-300 rounded-lg px-3 py-2" value="0.90"></div>
+      <div><label class="text-xs text-slate-500">有效期（月）</label><input type="number" class="mt-1 w-full border border-slate-300 rounded-lg px-3 py-2" value="12"></div>
+      <div class="col-span-2"><label class="text-xs text-slate-500">软权益清单（一行一条）</label>
+        <textarea class="mt-1 w-full border border-slate-300 rounded-lg px-3 py-2" rows="4">月度免费置顶位 8 个
+广告位采购 8 折
+行业研报订阅（月报+周报）
+电子签章 50 次/月
+7×12 群专属客服
+季度首页推荐 1 次
+年度峰会席位 1 席</textarea>
+      </div>
+      <div class="col-span-2 p-3 rounded-lg bg-warn/10 text-xs text-warn">
+        ⚠ 修改等级配置将于次日 0 点生效；当前等级企业不立即变更，到期评估时按新规则执行。
+      </div>
+    </div>
+    <div class="px-5 py-4 border-t border-slate-100 flex justify-end gap-2">
+      <button onclick="closeModal('modal-tier')" class="text-sm px-4 py-2 rounded-lg border border-slate-300">取消</button>
+      <button onclick="closeModal('modal-tier');saveRule()" class="text-sm px-4 py-2 rounded-lg bg-steel text-white">保存</button>
     </div>
   </div>
 </div>
@@ -675,9 +936,9 @@ function renderMall(){
 function switchTab(name){
   document.querySelectorAll('.sidebar-item').forEach(b=>b.classList.toggle('active', b.dataset.tab===name));
   document.querySelectorAll('[data-tab-content]').forEach(s=>s.classList.toggle('hidden', s.dataset.tabContent!==name));
-  const labels = {dashboard:'数据看板',rules:'积分规则',records:'积分流水',risk:'风控异常',mall:'商城管理',levels:'等级体系'};
+  const labels = {dashboard:'数据看板',rules:'积分规则',records:'积分流水',risk:'风控异常',mall:'商城管理',levels:'企业会员等级'};
   document.getElementById('crumb-current').textContent = labels[name];
-  // 切换后图表 resize
+  if(name==='levels') initTierChart();
   setTimeout(()=>Object.values(charts).forEach(c=>c&&c.resize()),50);
 }
 
@@ -750,18 +1011,45 @@ function initCharts(){
     }]
   });
 
-  // 等级
+  // 等级分布（看板版）：仅展示企业 4 级会员分布
   charts.levels = echarts.init(document.getElementById('chart-levels'));
   charts.levels.setOption({
-    tooltip:{trigger:'axis'},
-    legend:{data:['个人','企业'],right:0,textStyle:{fontSize:11}},
-    grid:{left:40,right:10,top:30,bottom:30},
-    xAxis:{type:'category',data:['L1/E1','L2/E2','L3/E3','L4/E4','L5/E5'],axisLine:{lineStyle:{color:'#cbd5e1'}}},
+    tooltip:{trigger:'axis',formatter:'{b}<br/>{c} 家企业'},
+    grid:{left:40,right:30,top:20,bottom:30},
+    xAxis:{type:'category',data:['M1 普通','M2 银卡','M3 金卡','M4 铂金'],axisLine:{lineStyle:{color:'#cbd5e1'}}},
     yAxis:{type:'value',splitLine:{lineStyle:{color:'#f1f5f9'}}},
-    series:[
-      {name:'个人',type:'bar',data:[12500,3800,1620,520,127],itemStyle:{color:'#10B981'},barWidth:18},
-      {name:'企业',type:'bar',data:[820,360,89,12,3],itemStyle:{color:'#F59E0B'},barWidth:18}
-    ]
+    series:[{
+      type:'bar',barWidth:38,
+      data:[
+        {value:820,itemStyle:{color:'#94A3B8',borderRadius:[6,6,0,0]}},
+        {value:360,itemStyle:{color:'#64748B',borderRadius:[6,6,0,0]}},
+        {value:89,itemStyle:{color:'#F59E0B',borderRadius:[6,6,0,0]}},
+        {value:15,itemStyle:{color:'#1E293B',borderRadius:[6,6,0,0]}}
+      ],
+      label:{show:true,position:'top',formatter:'{c}',fontSize:11,color:'#475569'}
+    }]
+  });
+}
+
+/* 会员分布（会员等级 Tab 内的图） */
+function initTierChart(){
+  if(!document.getElementById('chart-tiers')) return;
+  if(charts.tiers) { charts.tiers.resize(); return; }
+  charts.tiers = echarts.init(document.getElementById('chart-tiers'));
+  charts.tiers.setOption({
+    tooltip:{trigger:'item',formatter:'{b}<br/>{c} 家 ({d}%)'},
+    legend:{bottom:0,textStyle:{fontSize:11}},
+    series:[{
+      type:'pie',radius:['42%','68%'],center:['50%','45%'],
+      data:[
+        {value:820,name:'M1 普通会员',itemStyle:{color:'#94A3B8'}},
+        {value:360,name:'M2 银卡会员',itemStyle:{color:'#64748B'}},
+        {value:89,name:'M3 金卡会员',itemStyle:{color:'#F59E0B'}},
+        {value:15,name:'M4 铂金卡会员',itemStyle:{color:'#1E293B'}}
+      ],
+      label:{formatter:'{b}\n{d}%',fontSize:10},
+      itemStyle:{borderRadius:6,borderColor:'#fff',borderWidth:2}
+    }]
   });
 }
 

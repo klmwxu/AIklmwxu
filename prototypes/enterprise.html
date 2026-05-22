@@ -66,50 +66,169 @@
 <main class="max-w-7xl mx-auto px-4 sm:px-6 py-5">
 
   <!-- 企业 Hero -->
-  <section class="bg-gradient-to-r from-steel to-blue-700 rounded-2xl p-5 sm:p-7 text-white shadow-xl">
-    <div class="flex flex-col lg:flex-row lg:items-center gap-5 justify-between">
+  <section class="bg-gradient-to-r from-amber-500 via-orange-500 to-amber-600 rounded-2xl p-5 sm:p-7 text-white shadow-xl relative overflow-hidden">
+    <div class="absolute -right-10 -top-10 w-48 h-48 rounded-full bg-white/10 blur-2xl"></div>
+    <div class="absolute right-10 top-4 text-7xl opacity-15">🥇</div>
+    <div class="relative flex flex-col lg:flex-row lg:items-center gap-5 justify-between">
       <div class="flex items-center gap-4">
         <div class="w-16 h-16 rounded-2xl bg-white/10 backdrop-blur flex items-center justify-center text-2xl font-bold ring-2 ring-white/20">钢</div>
         <div>
           <div class="flex items-center gap-2 flex-wrap">
             <h1 class="text-xl sm:text-2xl font-bold">某钢贸有限公司</h1>
-            <span class="chip bg-warn text-white">E3 金牌企业</span>
+            <span class="chip bg-white text-amber-700 font-bold">M3 金卡会员</span>
             <span class="chip bg-white/20 text-white">已认证</span>
           </div>
-          <div class="text-xs sm:text-sm text-white/70 mt-1">统一社会信用代码 91310000XXXXXXXX0X · 主营品类：螺纹钢、热卷、中厚板</div>
+          <div class="text-xs sm:text-sm text-white/80 mt-1">统一社会信用代码 91310000XXXXXXXX0X · 主营品类：螺纹钢、热卷、中厚板</div>
         </div>
       </div>
       <div class="flex items-end gap-6 lg:border-l lg:border-white/20 lg:pl-7">
         <div>
-          <div class="text-xs text-white/70">企业积分余额</div>
+          <div class="text-xs text-white/80">企业积分余额</div>
           <div class="text-3xl sm:text-4xl font-extrabold mt-1">38,560</div>
-          <div class="text-xs text-white/70 mt-1">≈ 服务费抵扣 ¥38.56</div>
+          <div class="text-xs text-white/80 mt-1">≈ 服务费抵扣 ¥38.56</div>
         </div>
         <div class="flex flex-col gap-2">
-          <button class="px-4 py-2 rounded-lg bg-white text-steel font-medium text-sm hover:bg-slate-100" onclick="openModal('modal-redeem')">兑换权益</button>
+          <button class="px-4 py-2 rounded-lg bg-white text-amber-700 font-medium text-sm hover:bg-slate-100" onclick="openModal('modal-redeem')">兑换权益</button>
           <button class="px-4 py-2 rounded-lg bg-white/10 hover:bg-white/20 text-sm">明细导出</button>
         </div>
       </div>
     </div>
 
-    <!-- 升级进度 -->
-    <div class="mt-5 pt-4 border-t border-white/20">
-      <div class="flex justify-between text-xs text-white/80 mb-1">
-        <span>距 E4 行业标杆还差 <span class="font-bold text-warn">11,440</span></span>
-        <span>38,560 / 50,000</span>
+    <!-- 倍率 / 折扣 摘要 -->
+    <div class="relative mt-5 pt-4 border-t border-white/20 grid grid-cols-3 gap-3">
+      <div class="text-center sm:text-left">
+        <div class="text-xs text-white/70">积分获取倍率</div>
+        <div class="text-2xl font-extrabold mt-0.5">1.5×</div>
+        <div class="text-[11px] text-white/70 mt-0.5">所有 EP 动作 × 1.5 入账</div>
       </div>
-      <div class="h-2 rounded-full bg-white/10 overflow-hidden">
-        <div class="h-full bg-warn" style="width:77.12%"></div>
+      <div class="text-center sm:text-left lg:border-l lg:border-white/20 lg:pl-5">
+        <div class="text-xs text-white/70">服务费折扣</div>
+        <div class="text-2xl font-extrabold mt-0.5">9.0 折</div>
+        <div class="text-[11px] text-white/70 mt-0.5">佣金 · 电子签 · 增值服务</div>
+      </div>
+      <div class="text-center sm:text-left lg:border-l lg:border-white/20 lg:pl-5">
+        <div class="text-xs text-white/70">兑换商城折扣</div>
+        <div class="text-2xl font-extrabold mt-0.5">9.0 折</div>
+        <div class="text-[11px] text-white/70 mt-0.5">所有商品标价 EP × 0.9</div>
+      </div>
+    </div>
+
+    <!-- 升级进度（按滚动 12 月 EP 或 年 GMV，取近者） -->
+    <div class="relative mt-5 pt-4 border-t border-white/20">
+      <div class="flex justify-between text-xs text-white/90 mb-1">
+        <span>距 <strong>M4 铂金卡</strong> 还差 <span class="font-bold">68,440 EP</span> 或 <span class="font-bold">¥1,260 万 GMV</span></span>
+        <span>滚动 12 月 EP: 31,560 / 100,000</span>
+      </div>
+      <div class="h-2 rounded-full bg-white/15 overflow-hidden">
+        <div class="h-full bg-white" style="width:31.56%"></div>
+      </div>
+      <div class="mt-2 flex items-center justify-between text-[11px] text-white/70">
+        <span>本期有效期至 2027-04-15 · 距到期 328 天</span>
+        <a class="hover:underline cursor-pointer">查看权益详情 ›</a>
       </div>
     </div>
   </section>
 
+  <!-- 会员权益对比 -->
+  <section class="bg-white rounded-2xl p-5 border border-slate-200 mt-4">
+    <div class="flex items-center justify-between mb-4">
+      <div>
+        <h3 class="font-bold text-slate-900">会员权益对比</h3>
+        <p class="text-xs text-slate-500 mt-0.5">当前 <span class="text-amber-600 font-medium">M3 金卡</span> · 滚动 12 月评估，T+1 自动升降级</p>
+      </div>
+      <button class="text-xs text-steel hover:underline">完整权益清单 ›</button>
+    </div>
+    <div class="grid grid-cols-2 xl:grid-cols-4 gap-3">
+
+      <div class="p-4 rounded-xl border-2 border-slate-200 bg-white">
+        <div class="flex items-center justify-between">
+          <span class="chip bg-slate-200 text-slate-600">M1</span>
+          <span class="text-xl">🪪</span>
+        </div>
+        <h4 class="mt-2 font-bold text-slate-900 text-sm">普通会员</h4>
+        <div class="mt-3 flex items-baseline gap-2">
+          <span class="text-base font-bold">1.0×</span>
+          <span class="text-xs text-slate-500">积分倍率</span>
+        </div>
+        <div class="text-xs text-slate-500">无折扣</div>
+        <div class="mt-2 text-[11px] text-slate-500">置顶 1 · 电子签 5/月</div>
+      </div>
+
+      <div class="p-4 rounded-xl border-2 border-slate-300 bg-gradient-to-br from-slate-50 to-slate-100">
+        <div class="flex items-center justify-between">
+          <span class="chip bg-slate-400 text-white">M2</span>
+          <span class="text-xl">🥈</span>
+        </div>
+        <h4 class="mt-2 font-bold text-slate-900 text-sm">银卡会员</h4>
+        <div class="mt-3 flex items-baseline gap-2">
+          <span class="text-base font-bold text-steel">1.2×</span>
+          <span class="text-xs text-slate-500">积分倍率</span>
+        </div>
+        <div class="text-xs text-ok font-medium">9.5 折</div>
+        <div class="mt-2 text-[11px] text-slate-500">置顶 3 · 电子签 20/月</div>
+      </div>
+
+      <div class="p-4 rounded-xl border-2 border-amber-400 bg-gradient-to-br from-amber-50 to-orange-50 relative">
+        <div class="absolute -top-2 left-1/2 -translate-x-1/2 chip bg-amber-500 text-white text-[10px] font-bold whitespace-nowrap">当前等级</div>
+        <div class="flex items-center justify-between">
+          <span class="chip bg-amber-500 text-white">M3</span>
+          <span class="text-xl">🥇</span>
+        </div>
+        <h4 class="mt-2 font-bold text-amber-900 text-sm">金卡会员</h4>
+        <div class="mt-3 flex items-baseline gap-2">
+          <span class="text-base font-bold text-amber-600">1.5×</span>
+          <span class="text-xs text-amber-700">积分倍率</span>
+        </div>
+        <div class="text-xs text-amber-700 font-medium">9.0 折</div>
+        <div class="mt-2 text-[11px] text-amber-800">置顶 8 · 电子签 50/月 · 周报</div>
+      </div>
+
+      <div class="p-4 rounded-xl border-2 border-slate-800 bg-gradient-to-br from-slate-800 to-slate-900 text-white">
+        <div class="flex items-center justify-between">
+          <span class="chip bg-warn text-slate-900">M4</span>
+          <span class="text-xl">💎</span>
+        </div>
+        <h4 class="mt-2 font-bold text-sm">铂金卡会员</h4>
+        <div class="mt-3 flex items-baseline gap-2">
+          <span class="text-base font-bold text-warn">2.0×</span>
+          <span class="text-xs text-white/70">积分倍率</span>
+        </div>
+        <div class="text-xs text-warn font-medium">8.5 折</div>
+        <div class="mt-2 text-[11px] text-white/70">不限置顶 · 1v1 BD · 峰会 3 席</div>
+      </div>
+    </div>
+
+    <!-- 升级指标 -->
+    <div class="mt-4 grid grid-cols-1 md:grid-cols-2 gap-3">
+      <div class="p-3 rounded-lg bg-slate-50">
+        <div class="flex items-center justify-between text-xs">
+          <span class="text-slate-600">滚动 12 月累计 EP（升 M4 需 ≥ 100,000）</span>
+          <span class="font-medium text-slate-900">31,560 / 100,000</span>
+        </div>
+        <div class="mt-1.5 h-1.5 rounded-full bg-white overflow-hidden">
+          <div class="h-full bg-amber-500" style="width:31.56%"></div>
+        </div>
+      </div>
+      <div class="p-3 rounded-lg bg-slate-50">
+        <div class="flex items-center justify-between text-xs">
+          <span class="text-slate-600">滚动 12 月累计 GMV（升 M4 需 ≥ ¥2,000 万）</span>
+          <span class="font-medium text-slate-900">¥740 万 / ¥2,000 万</span>
+        </div>
+        <div class="mt-1.5 h-1.5 rounded-full bg-white overflow-hidden">
+          <div class="h-full bg-amber-500" style="width:37%"></div>
+        </div>
+      </div>
+    </div>
+    <p class="mt-3 text-[11px] text-slate-500">提示：EP 与 GMV 任一指标达标即可升级；与限时活动倍率不叠加，取最大值。</p>
+  </section>
+
   <!-- KPI 卡 -->
   <section class="grid grid-cols-2 lg:grid-cols-4 gap-3 mt-4">
-    <div class="bg-white rounded-xl p-4 border border-slate-200">
+    <div class="bg-white rounded-xl p-4 border border-slate-200 relative">
       <div class="text-xs text-slate-500">本月获得</div>
       <div class="mt-1 text-2xl font-bold text-ok">+ 8,650</div>
-      <div class="mt-1 text-xs text-slate-400">环比 ↑ 14.2%</div>
+      <div class="mt-1 text-xs text-amber-600">含金卡 1.5× 加成 +2,883</div>
+      <span class="absolute top-2 right-2 chip bg-amber-500/10 text-amber-600 text-[10px]">1.5×</span>
     </div>
     <div class="bg-white rounded-xl p-4 border border-slate-200">
       <div class="text-xs text-slate-500">本月消耗</div>
@@ -191,9 +310,12 @@
 
     <!-- 推荐权益 -->
     <div class="lg:col-span-2 bg-white rounded-xl border border-slate-200 p-5">
-      <div class="flex items-center justify-between mb-3">
+      <div class="flex items-center justify-between mb-3 gap-2 flex-wrap">
         <h3 class="font-semibold text-slate-900">企业可兑换权益</h3>
-        <span class="text-xs text-slate-500">EP 兑换比例：1000 EP = ¥1 服务费抵扣</span>
+        <div class="flex items-center gap-2 text-xs">
+          <span class="chip bg-amber-500/10 text-amber-600">金卡 9.0 折已生效</span>
+          <span class="text-slate-500">1000 EP = ¥1 抵扣</span>
+        </div>
       </div>
       <div id="redeem-grid" class="grid grid-cols-1 sm:grid-cols-2 gap-3"></div>
     </div>
@@ -261,13 +383,14 @@
         <label class="text-xs text-slate-500">数量</label>
         <input type="number" value="1" class="mt-1 w-full text-sm border border-slate-300 rounded-lg px-3 py-2">
       </div>
-      <div class="flex justify-between text-sm bg-slate-50 rounded-lg p-3">
-        <span class="text-slate-500">消耗 EP</span>
-        <span class="font-bold text-warn">100,000</span>
+      <div class="space-y-1.5 bg-slate-50 rounded-lg p-3 text-sm">
+        <div class="flex justify-between"><span class="text-slate-500">标价 EP</span><span class="text-slate-700 line-through">100,000</span></div>
+        <div class="flex justify-between"><span class="text-amber-600 font-medium">金卡 9.0 折</span><span class="text-amber-600 font-medium">- 10,000</span></div>
+        <div class="flex justify-between pt-1.5 border-t border-slate-200"><span class="text-slate-900 font-medium">实际消耗 EP</span><span class="font-bold text-warn text-base">90,000</span></div>
       </div>
       <div class="flex justify-between text-sm">
         <span class="text-slate-500">兑换后余额</span>
-        <span class="text-slate-900">-61,440 <span class="text-danger text-xs">余额不足</span></span>
+        <span class="text-slate-900">-51,440 <span class="text-danger text-xs">余额不足</span></span>
       </div>
       <div class="text-xs text-slate-500 bg-warn/5 p-3 rounded-lg">大额兑换（≥ 50,000 EP）将进入企业法人审批流程，约 1 工作日完成审核。</div>
     </div>
@@ -323,8 +446,13 @@ const REDEEMS = [
   {icon:'🚚',name:'物流抵扣券 300 元',desc:'平台合作承运商',ep:30000,tag:'新',tagCls:'bg-steel/10 text-steel'},
 ];
 
-document.getElementById('redeem-grid').innerHTML = REDEEMS.map(r=>`
-  <div class="border border-slate-200 rounded-xl p-4 hover:border-steel/40 hover:shadow-md transition cursor-pointer">
+/* 金卡 9.0 折，向上取整 */
+const MEMBER_DISCOUNT = 0.9;
+document.getElementById('redeem-grid').innerHTML = REDEEMS.map(r=>{
+  const actual = Math.ceil(r.ep * MEMBER_DISCOUNT);
+  const saved = r.ep - actual;
+  return `
+  <div class="border border-slate-200 rounded-xl p-4 hover:border-amber-400 hover:shadow-md transition cursor-pointer">
     <div class="flex items-start gap-3">
       <div class="w-10 h-10 rounded-lg bg-slate-50 flex items-center justify-center text-xl shrink-0">${r.icon}</div>
       <div class="flex-1 min-w-0">
@@ -336,11 +464,18 @@ document.getElementById('redeem-grid').innerHTML = REDEEMS.map(r=>`
       </div>
     </div>
     <div class="mt-3 flex items-center justify-between">
-      <span class="text-warn font-bold">${r.ep.toLocaleString()} <span class="text-xs font-normal text-slate-500">EP</span></span>
+      <div>
+        <div class="flex items-baseline gap-1">
+          <span class="text-warn font-bold">${actual.toLocaleString()}</span>
+          <span class="text-xs text-slate-500">EP</span>
+          <span class="text-[11px] text-slate-400 line-through ml-1">${r.ep.toLocaleString()}</span>
+        </div>
+        <div class="text-[10px] text-amber-600 mt-0.5">金卡省 ${saved.toLocaleString()} EP</div>
+      </div>
       <button class="text-xs px-3 py-1 rounded-lg bg-steel text-white" onclick="openModal('modal-redeem')">立即兑换</button>
     </div>
   </div>
-`).join('');
+`;}).join('');
 
 /* 待审批 */
 const APPROVALS = [
